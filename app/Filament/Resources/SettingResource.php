@@ -20,9 +20,9 @@ class SettingResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\Section::make('Storefront setting')->description('Use the keys below for the announcement bar, footer contact details and social links.')->schema([
-                Forms\Components\Select::make('group')->options(['general' => 'General', 'footer' => 'Footer', 'social' => 'Social'])->default('general')->required(),
-                Forms\Components\TextInput::make('key')->required()->unique(ignoreRecord: true)->helperText('Examples: announcement, footer_story, footer_email, footer_phone, footer_address, instagram_url, facebook_url, pinterest_url'),
+            Forms\Components\Section::make('Storefront setting')->description('Use the keys below for WhatsApp, the announcement bar, footer contact details and social links.')->schema([
+                Forms\Components\Select::make('group')->options(['general' => 'General', 'contact' => 'Contact', 'footer' => 'Footer', 'social' => 'Social'])->default('general')->required(),
+                Forms\Components\TextInput::make('key')->required()->unique(ignoreRecord: true)->helperText('Examples: whatsapp_number, announcement, footer_email, footer_phone, instagram_url'),
                 Forms\Components\Select::make('type')->options(['string' => 'Text', 'boolean' => 'Yes / no', 'integer' => 'Number', 'json' => 'JSON'])->default('string')->required(),
                 Forms\Components\Textarea::make('value')->rows(4)->columnSpanFull(),
             ])->columns(3),

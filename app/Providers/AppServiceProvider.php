@@ -24,10 +24,11 @@ class AppServiceProvider extends ServiceProvider
     {
         View::composer('layouts.store', function ($view) {
             $defaults = [
-                'announcement' => 'Complimentary delivery across India on orders over ₹15,000',
+                'announcement' => 'Explore our furniture catalogue · Custom designs available',
                 'footer_story' => 'Furniture for real homes and everyday moments—comfortable, considered and made to stay with you.',
                 'footer_email' => 'hello@msfurniture.in',
                 'footer_phone' => '+91 00000 00000',
+                'whatsapp_number' => '910000000000',
                 'footer_address' => 'India · Nationwide delivery',
                 'instagram_url' => '#',
                 'facebook_url' => '#',

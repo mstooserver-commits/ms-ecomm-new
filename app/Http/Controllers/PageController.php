@@ -19,6 +19,11 @@ class PageController extends Controller
         return view('pages.contact');
     }
 
+    public function customFurniture()
+    {
+        return view('pages.custom-furniture');
+    }
+
     public function about()
     {
         $content = Setting::where('key', 'about_content')->value('value');

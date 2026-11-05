@@ -5,6 +5,7 @@ namespace App\Livewire\Store;
 use App\Models\Product;
 use App\Models\RecentlyViewedProduct;
 use App\Models\Review;
+use App\Models\Setting;
 use App\Models\Wishlist;
 use App\Services\CartService;
 use Illuminate\Support\Facades\Auth;
@@ -147,6 +148,7 @@ class ProductShow extends Component
             'related' => $related,
             'recent' => $recent,
             'inWishlist' => Auth::check() && Wishlist::where('user_id', Auth::id())->where('product_id', $this->product->id)->exists(),
+            'whatsappNumber' => Setting::valueFor('whatsapp_number', config('shop.whatsapp_number') ?: '910000000000'),
         ])->layout('layouts.store');
     }
 }

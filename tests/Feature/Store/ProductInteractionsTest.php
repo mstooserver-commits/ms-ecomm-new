@@ -4,6 +4,7 @@ namespace Tests\Feature\Store;
 
 use App\Livewire\Store\ProductShow;
 use App\Models\CartItem;
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -13,6 +14,23 @@ use Tests\TestCase;
 class ProductInteractionsTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_the_catalogue_can_be_filtered_by_category_url(): void
+    {
+        $category = Category::create([
+            'name' => 'Living Room', 'slug' => 'living-room', 'is_active' => true,
+        ]);
+
+        Product::create([
+            'category_id' => $category->id, 'name' => 'Manshu Sofa',
+            'slug' => 'manshu-sofa', 'sku' => 'MS-MANSHU', 'price' => 0,
+            'stock' => 0, 'is_active' => true,
+        ]);
+
+        $this->get(route('shop', ['category' => 'living-room']))
+            ->assertOk()
+            ->assertSee('Manshu Sofa');
+    }
 
     public function test_a_guest_can_select_a_finish_change_quantity_and_add_to_cart(): void
     {

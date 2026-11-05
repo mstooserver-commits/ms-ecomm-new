@@ -7,7 +7,6 @@ use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Product;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -67,30 +66,19 @@ class ProductResource extends Resource
                                                     Forms\Components\TextInput::make('slug')->required(),
                                                 ]),
                                         ]),
-                                        Forms\Components\Grid::make(2)->schema([
+                                        Forms\Components\Grid::make(1)->schema([
                                             Forms\Components\Select::make('category_id')
                                                 ->relationship('category', 'name')
                                                 ->searchable()
-                                                ->preload()
-                                                ->live()
-                                                ->afterStateUpdated(fn (Set $set) => $set('subcategory_id', null)),
-                                            Forms\Components\Select::make('subcategory_id')
-                                                ->relationship(
-                                                    'subcategory',
-                                                    'name',
-                                                    fn (Builder $query, Get $get) => $query->when(
-                                                        $get('category_id'),
-                                                        fn ($q, $catId) => $q->where('category_id', $catId)
-                                                    )
-                                                )
-                                                ->searchable()
-                                                ->preload()
-                                                ->disabled(fn (Get $get): bool => ! $get('category_id')),
+                                                ->preload(),
                                         ]),
                                         Forms\Components\Textarea::make('short_description')
                                             ->rows(2)
                                             ->maxLength(500)
                                             ->columnSpanFull(),
+                                        Forms\Components\Hidden::make('price')->default(0),
+                                        Forms\Components\Hidden::make('stock')->default(0),
+                                        Forms\Components\Hidden::make('low_stock_threshold')->default(0),
                                     ]),
                                 Forms\Components\Section::make('Visibility')
                                     ->columns(3)
@@ -105,11 +93,6 @@ class ProductResource extends Resource
                                             ->label('Trending'),
                                         Forms\Components\Toggle::make('is_new_arrival')
                                             ->label('New arrival'),
-                                        Forms\Components\Toggle::make('is_best_seller')
-                                            ->label('Best seller'),
-                                        Forms\Components\Toggle::make('is_flash_sale')
-                                            ->label('Flash sale')
-                                            ->live(),
                                     ]),
                             ]),
 
@@ -132,57 +115,17 @@ class ProductResource extends Resource
                                     ->columnSpanFull(),
                             ]),
 
-                        Forms\Components\Tabs\Tab::make('Pricing & Stock')
-                            ->icon('heroicon-o-currency-dollar')
+                        Forms\Components\Tabs\Tab::make('Options')
+                            ->icon('heroicon-o-swatch')
                             ->schema([
-                                Forms\Components\Section::make('Pricing')
-                                    ->columns(3)
-                                    ->schema([
-                                        Forms\Components\TextInput::make('price')
-                                            ->required()
-                                            ->numeric()
-                                            ->prefix('$')
-                                            ->minValue(0),
-                                        Forms\Components\TextInput::make('compare_at_price')
-                                            ->label('Compare at price')
-                                            ->numeric()
-                                            ->prefix('$')
-                                            ->helperText('Original price for sale badge'),
-                                        Forms\Components\TextInput::make('cost_price')
-                                            ->label('Cost')
-                                            ->numeric()
-                                            ->prefix('$'),
-                                    ]),
-                                Forms\Components\Section::make('Inventory')
-                                    ->columns(2)
-                                    ->schema([
-                                        Forms\Components\TextInput::make('stock')
-                                            ->required()
-                                            ->numeric()
-                                            ->default(0)
-                                            ->minValue(0),
-                                        Forms\Components\TextInput::make('low_stock_threshold')
-                                            ->numeric()
-                                            ->default(5)
-                                            ->helperText('Alert when stock falls below'),
-                                    ]),
-                                Forms\Components\Section::make('Flash sale')
-                                    ->columns(2)
-                                    ->schema([
-                                        Forms\Components\TextInput::make('flash_sale_price')
-                                            ->numeric()
-                                            ->prefix('$'),
-                                        Forms\Components\DateTimePicker::make('flash_sale_ends_at')
-                                            ->label('Ends at'),
-                                    ])
-                                    ->visible(fn (Get $get): bool => (bool) $get('is_flash_sale')),
-                                Forms\Components\Section::make('Attributes')
-                                    ->description('Default options — add variants on the Variants tab after saving')
+                                Forms\Components\Section::make('Furniture options')
+                                    ->description('Add the sizes and finishes visitors can enquire about.')
                                     ->schema([
                                         Forms\Components\TagsInput::make('available_sizes')
-                                            ->placeholder('S, M, L, XL'),
+                                            ->placeholder('6 ft, 8 seater, King size'),
                                         Forms\Components\TagsInput::make('available_colors')
-                                            ->placeholder('Black, White'),
+                                            ->label('Available finishes / colours')
+                                            ->placeholder('Walnut, Natural Oak, Beige'),
                                     ]),
                             ]),
 
@@ -231,20 +174,9 @@ class ProductResource extends Resource
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('category.name')
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('price')
-                    ->money('INR')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('stock')
-                    ->sortable()
-                    ->badge()
-                    ->color(fn (int $state): string => $state <= 0 ? 'danger' : ($state <= 5 ? 'warning' : 'success')),
                 Tables\Columns\IconColumn::make('is_active')
                     ->label('Live')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('sales_count')
-                    ->label('Sales')
-                    ->sortable()
-                    ->toggleable(),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
@@ -261,9 +193,6 @@ class ProductResource extends Resource
                     ->relationship('category', 'name')
                     ->searchable()
                     ->preload(),
-                Tables\Filters\Filter::make('low_stock')
-                    ->label('Low stock')
-                    ->query(fn (Builder $query): Builder => $query->whereColumn('stock', '<=', 'low_stock_threshold')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -275,7 +204,7 @@ class ProductResource extends Resource
                 ]),
             ])
             ->emptyStateHeading('No products yet')
-            ->emptyStateDescription('Create your first product to start selling.')
+            ->emptyStateDescription('Create your first furniture catalogue item.')
             ->emptyStateIcon('heroicon-o-shopping-bag');
     }
 
@@ -283,7 +212,6 @@ class ProductResource extends Resource
     {
         return [
             RelationManagers\ImagesRelationManager::class,
-            RelationManagers\VariantsRelationManager::class,
         ];
     }
 

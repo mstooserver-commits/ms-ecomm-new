@@ -24,21 +24,22 @@ class BannerResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Hero content')->schema([
+                Forms\Components\Section::make('Catalogue slider')->description('Upload homepage slider images and control their order.')->schema([
                     Forms\Components\TextInput::make('title')->required()->maxLength(255),
                     Forms\Components\TextInput::make('subtitle')->maxLength(255),
                     Forms\Components\FileUpload::make('image')
                         ->image()
                         ->directory('banners')
                         ->disk('public')
-                        ->helperText('Recommended: 1920×1080'),
+                        ->required()
+                        ->helperText('Recommended: 1920×1080, JPG or WebP'),
                     Forms\Components\FileUpload::make('video')
                         ->directory('banners/videos')
                         ->disk('public')
                         ->acceptedFileTypes(['video/mp4', 'video/webm'])
                         ->helperText('Optional — overrides image when set'),
                     Forms\Components\TextInput::make('link')->url()->placeholder('/shop'),
-                    Forms\Components\TextInput::make('button_text')->default('Shop Now'),
+                    Forms\Components\TextInput::make('button_text')->default('View Catalogue'),
                 ]),
                 Forms\Components\Section::make('Settings')->columns(3)->schema([
                     Forms\Components\Select::make('placement')

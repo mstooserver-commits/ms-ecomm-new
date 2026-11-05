@@ -12,6 +12,7 @@ use Filament\Tables\Table;
 
 class CouponResource extends Resource
 {
+    protected static bool $shouldRegisterNavigation = false;
     protected static ?string $model = Coupon::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-ticket';

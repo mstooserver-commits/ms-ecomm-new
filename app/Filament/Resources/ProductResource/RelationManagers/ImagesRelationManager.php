@@ -21,12 +21,20 @@ class ImagesRelationManager extends RelationManager
         return $form->schema([
             Forms\Components\FileUpload::make('path')
                 ->label('Image')
-                ->image()
+                ->acceptedFileTypes([
+                    'image/jpeg',
+                    'image/png',
+                    'image/webp',
+                    'image/gif',
+                    'image/avif',
+                    'image/jfif',
+                    'application/octet-stream',
+                ])
                 ->disk('public')
                 ->directory('products')
                 ->visibility('public')
                 ->imageEditor()
-                ->helperText('Shown on the product card and product detail page. Recommended: 1200 × 1500px.')
+                ->helperText('JPG, PNG, WebP, GIF or AVIF. Recommended: 1200 × 1500px.')
                 ->required()
                 ->columnSpanFull(),
             Forms\Components\TextInput::make('alt')

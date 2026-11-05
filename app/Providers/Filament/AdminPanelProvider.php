@@ -41,7 +41,7 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarCollapsibleOnDesktop()
             ->navigationGroups([
                 NavigationGroup::make('Catalog')->icon('heroicon-o-shopping-bag'),
-                NavigationGroup::make('Sales')->icon('heroicon-o-banknotes'),
+                NavigationGroup::make('Enquiries')->icon('heroicon-o-chat-bubble-left-right'),
                 NavigationGroup::make('Marketing')->icon('heroicon-o-megaphone'),
                 NavigationGroup::make('Content')->icon('heroicon-o-document-text'),
             ])
@@ -51,11 +51,7 @@ class AdminPanelProvider extends PanelProvider
                 Pages\Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
-            ->widgets([
-                \App\Filament\Widgets\StatsOverview::class,
-                \App\Filament\Widgets\OrdersChart::class,
-                \App\Filament\Widgets\LatestOrders::class,
-            ])
+            ->widgets([])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
