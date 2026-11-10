@@ -21,4 +21,11 @@
         </div>
     </div>
 </section>
+<section class="max-w-[1440px] mx-auto px-6 lg:px-10 py-16 lg:py-24">
+    <div class="grid md:grid-cols-3 gap-px bg-[#17351d]/15">
+        <article class="bg-[#faf9f6] p-8 lg:p-10"><p class="eyebrow text-[#5f8c52] mb-5">Showroom</p><h2 class="font-display text-3xl mb-4">Mohali, Punjab</h2><p class="text-sm text-stone-600 leading-7">Shop No. 5 & 6<br>Sector 74-A, Mohali<br>Punjab 160055</p></article>
+        <article class="bg-[#faf9f6] p-8 lg:p-10"><p class="eyebrow text-[#5f8c52] mb-5">Call us</p><div class="space-y-3 text-sm"><a class="block hover:text-[#5f8c52]" href="tel:+919888673566">+91 98886 73566</a><a class="block hover:text-[#5f8c52]" href="tel:+919779696006">+91 97796 96006</a><a class="block hover:text-[#5f8c52]" href="tel:+918837582556">+91 88375 82556</a></div></article>
+        <article class="bg-[#faf9f6] p-8 lg:p-10"><p class="eyebrow text-[#5f8c52] mb-5">Working hours</p><h2 class="font-display text-3xl mb-4">Open daily</h2><p class="text-sm text-stone-600 leading-7 mb-5">10:00 AM – 8:00 PM</p><a href="https://wa.me/919779696006" target="_blank" rel="noopener" class="eyebrow border-b border-[#222822] pb-1">Chat on WhatsApp →</a></article>
+    </div>
+</section>
 @endsection

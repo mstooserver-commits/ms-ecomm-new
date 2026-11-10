@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             EcommerceSeeder::class,
             FurnitureSeeder::class,
+            ShopifyCatalogSeeder::class,
         ]);
     }
 }

@@ -24,12 +24,12 @@ class AppServiceProvider extends ServiceProvider
     {
         View::composer('layouts.store', function ($view) {
             $defaults = [
-                'announcement' => 'Explore our furniture catalogue · Custom designs available',
-                'footer_story' => 'Furniture for real homes and everyday moments—comfortable, considered and made to stay with you.',
-                'footer_email' => 'hello@msfurniture.in',
-                'footer_phone' => '+91 00000 00000',
-                'whatsapp_number' => '910000000000',
-                'footer_address' => 'India · Nationwide delivery',
+                'announcement' => 'Luxury & custom furniture · Visit our Mohali showroom',
+                'footer_story' => 'Bespoke furniture made with premium woods, master-applied finishes and lasting comfort in Mohali, Punjab.',
+                'footer_email' => 'hello@msfurnitureworld.com',
+                'footer_phone' => '+91 98886 73566',
+                'whatsapp_number' => '919779696006',
+                'footer_address' => 'Shop No. 5 & 6, Sector 74-A, Mohali, Punjab 160055',
                 'instagram_url' => '#',
                 'facebook_url' => '#',
                 'pinterest_url' => '#',

@@ -36,6 +36,76 @@
 @foreach([['truck','Delivery across India'],['leaf','Thoughtfully crafted'],['shield','5-year warranty'],['chat','Design consultation']] as $benefit)<div class="py-6 px-4 text-center"><p class="eyebrow text-[#75806a]">{{ $benefit[1] }}</p></div>@endforeach
 </div></section>
 
+@php
+    $luxuryCategories = [
+        ['Luxury Sofa', 'sofas', 'https://4zgwrv-td.myshopify.com/cdn/shop/collections/change-fabric-color-from-blue-to-pista-light-greaan-and-cream-with-royal-prints-on-sofa.png?v=1769483918&width=900'],
+        ['Luxury Beds', null, 'https://4zgwrv-td.myshopify.com/cdn/shop/collections/change-the-fabric-from-red-to-a-light-teal-and-beige-color-with-luxury-print-fabric.png?v=1769484275&width=900'],
+        ['Luxury Dining', 'tables-consoles', 'https://4zgwrv-td.myshopify.com/cdn/shop/collections/make-it-more-royal-and-change-its-fabric-to-very-light-orange-and-cream-luxury-print-fabric.png?v=1769484520&width=900'],
+        ['Luxury Chairs', 'chairs', 'https://4zgwrv-td.myshopify.com/cdn/shop/collections/make-design-of-chair-more-royal.png?v=1769484765&width=900'],
+        ['Luxury Consoles', 'tables-consoles', 'https://4zgwrv-td.myshopify.com/cdn/shop/collections/a-royal-luxury-console-table.png?v=1769484946&width=900'],
+    ];
+    $mainCategories = [
+        ['Luxury Furniture', null, 'https://4zgwrv-td.myshopify.com/cdn/shop/collections/luxury-royal-furniture-items.png?v=1769250767&width=1200'],
+        ['Modern Furniture', null, 'https://4zgwrv-td.myshopify.com/cdn/shop/collections/modern-furniture.png?v=1769251017&width=1200'],
+        ['Office Furniture', 'office-furniture', 'https://4zgwrv-td.myshopify.com/cdn/shop/collections/make-it-look-more-royal-and-luxury.png?v=1769255618&width=1200'],
+        ['Hotel & Project Furniture', null, 'https://4zgwrv-td.myshopify.com/cdn/shop/collections/hotel-project-design.png?v=1769513687&width=1200'],
+    ];
+@endphp
+<section class="bg-[#15331d] text-white py-14 lg:py-20 overflow-hidden">
+    <div class="max-w-[1500px] mx-auto px-5 lg:px-10">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-5 mb-9 lg:mb-12">
+            <div><p class="eyebrow text-[#9ddc68] mb-3">Explore the collection</p><h2 class="font-display text-4xl lg:text-6xl">Furniture by category</h2></div>
+            <a href="{{ route('collections.all') }}" class="eyebrow text-white/70 border-b border-white/40 pb-2 hover:text-white">View all furniture →</a>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-6">
+            @foreach($luxuryCategories as [$name, $category, $image])
+                <a href="{{ $category ? route('shop', ['category' => $category]) : route('collections.all') }}" class="group min-w-0">
+                    <div class="aspect-[16/10] bg-white/5 overflow-hidden mb-4"><img src="{{ $image }}" alt="{{ $name }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" loading="lazy"></div>
+                    <h3 class="text-sm sm:text-base lg:text-lg uppercase tracking-[.04em] text-white/90 group-hover:text-[#9ddc68]">{{ $name }}</h3>
+                </a>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+<section class="bg-white py-8 lg:py-12 overflow-hidden">
+    <div class="max-w-[1500px] mx-auto px-5 lg:px-10">
+        <div class="flex gap-5 lg:gap-7 overflow-x-auto snap-x hide-scrollbar pb-3">
+            @foreach($mainCategories as [$name, $category, $image])
+                <a href="{{ $category ? route('shop', ['category' => $category]) : route('collections.all') }}" class="group min-w-[82vw] sm:min-w-[45%] lg:min-w-[31%] snap-start">
+                    <div class="aspect-[16/6] bg-[#f2efe8] overflow-hidden mb-4"><img src="{{ $image }}" alt="{{ $name }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" loading="lazy"></div>
+                    <h3 class="font-display text-2xl lg:text-3xl">{{ $name }}</h3>
+                </a>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+<section class="bg-[#111] text-white overflow-hidden border-y border-white/10">
+    <div class="py-5 whitespace-nowrap flex gap-10 text-sm sm:text-base uppercase tracking-[.08em] text-white/80 animate-[marquee_26s_linear_infinite]">
+        @foreach(range(1, 2) as $repeat)<span>35+ Years Experience</span><span>Custom Manufacturing</span><span>Premium Materials</span><span>Residential & Hotel Projects</span><span>Curated Collections</span>@endforeach
+    </div>
+</section>
+
+<section class="bg-[#dd884d] overflow-hidden">
+    <div class="grid lg:grid-cols-2 min-h-[440px] lg:min-h-[560px]">
+        <div class="min-h-[330px] lg:min-h-full"><img src="https://4zgwrv-td.myshopify.com/cdn/shop/files/wooden-materials-craftmanship.png?v=1769254789&width=1800" alt="MS Furniture materials and craftsmanship" class="w-full h-full object-cover" loading="lazy"></div>
+        <div class="bg-[#15331d] text-white flex items-center justify-center text-center px-7 py-16 lg:p-16">
+            <div class="max-w-md"><p class="eyebrow text-[#9ddc68] mb-5">Inside every piece</p><h2 class="font-display text-4xl lg:text-6xl mb-6">Materials & craftsmanship</h2><p class="text-white/70 leading-7 mb-9">Handcrafted for enduring quality with carefully selected timber, premium upholstery and master-applied finishes.</p><a href="{{ route('materials') }}" class="inline-flex rounded-full bg-[#eab792] text-[#222822] px-7 py-4 eyebrow hover:bg-white">View materials</a></div>
+        </div>
+    </div>
+    <div class="grid lg:grid-cols-[.84fr_1.16fr] min-h-[440px] lg:min-h-[570px]">
+        <div class="flex items-center justify-center px-7 py-16 lg:p-16 order-2 lg:order-1">
+            <div class="max-w-md"><p class="eyebrow text-[#603319] mb-5">Spaces we have shaped</p><h2 class="font-display text-4xl lg:text-6xl mb-6">Our Projects</h2><p class="text-[#4b2818]/80 leading-7 mb-9">From private residences and celebrity homes to government and large-scale hospitality projects, explore a selection of our completed work.</p><a href="{{ route('collections.all') }}" class="inline-flex rounded-full bg-[#f6dcc8] text-[#222822] px-7 py-4 eyebrow hover:bg-white">View all projects</a></div>
+        </div>
+        <div class="grid grid-cols-3 min-h-[330px] lg:min-h-full order-1 lg:order-2">
+            <img src="https://4zgwrv-td.myshopify.com/cdn/shop/files/change-sofa-chair-color-to-beige.png?v=1769481930&width=900" alt="Luxury residential furniture project" class="w-full h-full object-cover" loading="lazy">
+            <img src="https://4zgwrv-td.myshopify.com/cdn/shop/files/ChatGPT_Image_Jan_27_2026_08_05_12_AM.png?v=1769481332&width=900" alt="Luxury hospitality interior project" class="w-full h-full object-cover" loading="lazy">
+            <img src="https://4zgwrv-td.myshopify.com/cdn/shop/collections/hotel-project-design.png?v=1769513687&width=900" alt="MS Furniture hotel project" class="w-full h-full object-cover" loading="lazy">
+        </div>
+    </div>
+</section>
+
 <section id="rooms" class="max-w-[1440px] mx-auto px-5 lg:px-10 py-20 lg:py-28">
     <div class="text-center max-w-2xl mx-auto mb-12"><p class="eyebrow text-[#75806a] mb-4">Spaces to settle into</p><h2 class="font-display text-4xl lg:text-6xl mb-5">Shop by room</h2><p class="text-stone-500 leading-7">Thoughtful foundations and finishing touches for every corner of your home.</p></div>
     @if($categories->isNotEmpty())

@@ -8,7 +8,7 @@
             <p class="eyebrow text-[#9dde63] mb-6">Our story</p>
             <h1 class="font-display text-5xl sm:text-7xl lg:text-[86px] leading-[.98]">Furniture made<br><em>for living.</em></h1>
         </div>
-        <p class="text-white/70 leading-8 max-w-lg">MS Furniture brings together comfortable forms, enduring materials and practical design for Australian homes. We believe the best rooms feel personal, relaxed and easy to live in.</p>
+        <p class="text-white/70 leading-8 max-w-lg">From our Mohali workshop, MS Furniture creates luxury and custom furniture for homes, hotels and statement interiors across India. Every piece balances skilled craftsmanship, comfort and lasting materials.</p>
     </div>
 </section>
 
