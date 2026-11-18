@@ -26,7 +26,9 @@ class CartService
     public function add(Product $product, ?ProductVariant $variant = null, int $quantity = 1): CartItem
     {
         $cart = $this->getCart();
-        $unitPrice = $variant?->price ?? $product->effectivePrice();
+        $unitPrice = ($variant && (float) $variant->price > 0)
+            ? (float) $variant->price
+            : $product->effectivePrice();
 
         $item = $cart->items()
             ->where('product_id', $product->id)

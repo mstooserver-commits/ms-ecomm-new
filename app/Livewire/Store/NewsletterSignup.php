@@ -9,6 +9,8 @@ class NewsletterSignup extends Component
 {
     public string $email = '';
 
+    public string $tone = 'dark';
+
     public bool $subscribed = false;
 
     public function subscribe(): void

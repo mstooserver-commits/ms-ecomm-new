@@ -25,10 +25,10 @@
 </section>
 
 <section class="max-w-[1440px] mx-auto px-6 lg:px-10 py-20 lg:py-28">
-    <div class="max-w-3xl mb-12 lg:mb-16"><p class="eyebrow text-[#668657] mb-4">The foundation</p><h2 class="font-display text-4xl lg:text-6xl mb-6">Our premium woods</h2><p class="text-stone-600 leading-7">We select kiln-dried, furniture-grade timber for structural integrity, reliable performance and timeless character.</p></div>
+    <div class="max-w-3xl mb-12 lg:mb-16"><p class="eyebrow text-[#111] mb-4">The foundation</p><h2 class="font-display text-4xl lg:text-6xl mb-6">Our premium woods</h2><p class="text-stone-600 leading-7">We select kiln-dried, furniture-grade timber for structural integrity, reliable performance and timeless character.</p></div>
     <div class="grid md:grid-cols-2 gap-6 lg:gap-8">
         @foreach($woods as [$name, $description, $image])
-            <article class="group bg-[#f2efe8] overflow-hidden"><div class="aspect-[16/10] bg-white overflow-hidden"><img src="{{ $image }}" alt="{{ $name }} sample" class="w-full h-full object-cover group-hover:scale-[1.03] transition duration-700" loading="lazy"></div><div class="p-7 lg:p-9"><p class="eyebrow text-[#668657] mb-3">Selected timber</p><h3 class="font-display text-3xl lg:text-4xl mb-4">{{ $name }}</h3><p class="text-sm text-stone-600 leading-7">{{ $description }}</p></div></article>
+            <article class="group bg-[#f2efe8] overflow-hidden"><div class="aspect-[16/10] bg-white overflow-hidden"><img src="{{ $image }}" alt="{{ $name }} sample" class="w-full h-full object-cover group-hover:scale-[1.03] transition duration-700" loading="lazy"></div><div class="p-7 lg:p-9"><p class="eyebrow text-[#111] mb-3">Selected timber</p><h3 class="font-display text-3xl lg:text-4xl mb-4">{{ $name }}</h3><p class="text-sm text-stone-600 leading-7">{{ $description }}</p></div></article>
         @endforeach
     </div>
 </section>
@@ -47,9 +47,9 @@
 <section class="max-w-[1440px] mx-auto px-6 lg:px-10 py-20 lg:py-28">
     <div class="grid lg:grid-cols-2 gap-10 lg:gap-20 items-center">
         <div class="aspect-[4/3] bg-[#f2efe8] overflow-hidden"><img src="https://4zgwrv-td.myshopify.com/cdn/shop/files/foam-used-in-chairs-or-sofa.png?v=1772344111&width=1400" alt="High-resilience foam used in MS Furniture seating" class="w-full h-full object-cover" loading="lazy"></div>
-        <div><p class="eyebrow text-[#668657] mb-4">The comfort</p><h2 class="font-display text-4xl lg:text-6xl mb-7">Luxury cushioning & upholstery</h2><div class="space-y-7 text-stone-600 leading-7"><div><h3 class="font-display text-3xl text-[#222822] mb-2">High-resilience foam</h3><p>Premium high-density HR foam contours to the body while retaining its shape for years, providing durable support without premature sagging.</p></div><div><h3 class="font-display text-3xl text-[#222822] mb-2">Premium upholstery</h3><p>Choose from ultra-soft velvets, breathable linens, performance fabrics and genuine bespoke leathers to complete your piece.</p></div></div><a href="{{ route('custom-furniture') }}" class="btn-dark mt-9">Discuss your material palette <span>→</span></a></div>
+        <div><p class="eyebrow text-[#111] mb-4">The comfort</p><h2 class="font-display text-4xl lg:text-6xl mb-7">Luxury cushioning & upholstery</h2><div class="space-y-7 text-stone-600 leading-7"><div><h3 class="font-display text-3xl text-[#222822] mb-2">High-resilience foam</h3><p>Premium high-density HR foam contours to the body while retaining its shape for years, providing durable support without premature sagging.</p></div><div><h3 class="font-display text-3xl text-[#222822] mb-2">Premium upholstery</h3><p>Choose from ultra-soft velvets, breathable linens, performance fabrics and genuine bespoke leathers to complete your piece.</p></div></div><a href="{{ route('custom-furniture') }}" class="btn-dark mt-9">Discuss your material palette <span>→</span></a></div>
     </div>
 </section>
 
-<section class="bg-[#eef3e8] py-16 lg:py-20 text-center px-6"><p class="eyebrow text-[#668657] mb-4">See it in person</p><h2 class="font-display text-4xl lg:text-6xl mb-5">Visit our Mohali showroom</h2><p class="text-stone-600 leading-7 max-w-2xl mx-auto mb-8">Compare timber, polish, fabric and leather samples with our design team at Shop No. 5 & 6, Sector 74-A, Mohali, Punjab 160055.</p><a href="{{ route('contact') }}" class="btn-dark">Plan your visit <span>→</span></a></section>
+<section class="bg-[#f6f6f6] py-16 lg:py-20 text-center px-6"><p class="eyebrow text-[#111] mb-4">See it in person</p><h2 class="font-display text-4xl lg:text-6xl mb-5">Visit our Mohali showroom</h2><p class="text-stone-600 leading-7 max-w-2xl mx-auto mb-8">Compare timber, polish, fabric and leather samples with our design team at Shop No. 5 & 6, Sector 74-A, Mohali, Punjab 160055.</p><a href="{{ route('contact') }}" class="btn-dark">Plan your visit <span>→</span></a></section>
 @endsection

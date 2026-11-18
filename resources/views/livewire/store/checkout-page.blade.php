@@ -23,6 +23,10 @@
                     </div>
                 </div>
                 <div>
+                    <label class="text-xs uppercase tracking-widest text-zinc-500">Phone</label>
+                    <input wire:model="shipping.phone" required class="w-full mt-2 bg-white border border-zinc-300 text-zinc-900 px-4 py-3 text-sm">
+                </div>
+                <div>
                     <label class="text-xs uppercase tracking-widest text-zinc-500">Address</label>
                     <input wire:model="shipping.address_line_1" required class="w-full mt-2 bg-white border border-zinc-300 text-zinc-900 px-4 py-3 text-sm">
                 </div>
@@ -60,6 +64,14 @@
             </div>
             <div class="glass p-8 h-fit">
                 <h2 class="text-xs uppercase tracking-widest text-zinc-500 mb-6">Order Total</h2>
+                <div class="space-y-3 text-sm mb-6 border-b border-zinc-200 pb-4">
+                    @foreach($totals['cart']->items as $item)
+                        <div class="flex justify-between gap-4">
+                            <span>{{ $item->product->name }} × {{ $item->quantity }}</span>
+                            <span>₹{{ number_format($item->lineTotal(), 0) }}</span>
+                        </div>
+                    @endforeach
+                </div>
                 <div class="space-y-3 text-sm mb-6">
                     <div class="flex justify-between"><span class="text-zinc-500">Subtotal</span><span>₹{{ number_format($totals['subtotal'], 2) }}</span></div>
                     @if($totals['discount'] > 0)<div class="flex justify-between text-emerald-700"><span>Discount</span><span>−₹{{ number_format($totals['discount'], 2) }}</span></div>@endif

@@ -1,189 +1,180 @@
 <div>
 @php
+    $bubbles = [
+        ['Phone Cases', 'phone-cases', asset('images/tech/phone-case.jpg')],
+        ['Charging', 'charging', asset('images/tech/power-bank.jpg')],
+        ['Earbuds', 'earbuds-cases', asset('images/tech/earbuds-case.jpg')],
+        ['Ring Holders', 'ring-holders', asset('images/tech/ring-holder.jpg')],
+        ['Watch Bands', 'watch-bands', asset('images/tech/watch-band.jpg')],
+        ['Laptop', 'laptop-protection', asset('images/tech/laptop-sleeve.jpg')],
+        ['Tablets', 'tablet-cases', asset('images/tech/tablet-case.jpg')],
+    ];
+
+    $mosaic = [
+        ['Phone Cases', 'phone-cases', asset('images/tech/phone-case.jpg'), true],
+        ['Magnetic Power Banks', 'charging', asset('images/tech/power-bank.jpg'), true],
+        ['Earbuds Cases', 'earbuds-cases', asset('images/tech/earbuds-case.jpg'), false],
+        ['Ring Holders', 'ring-holders', asset('images/tech/ring-holder.jpg'), true],
+        ['Watch Bands', 'watch-bands', asset('images/tech/watch-band.jpg'), false],
+        ['Laptop Protection', 'laptop-protection', asset('images/tech/laptop-sleeve.jpg'), false],
+        ['Tablet Cases', 'tablet-cases', asset('images/tech/tablet-case.jpg'), true],
+        ['Shop All Tech', null, asset('images/tech/hero-tech.jpg'), false],
+    ];
+
     $heroSlides = $banners->map(fn ($banner) => [
         'title' => $banner->title,
         'subtitle' => $banner->subtitle,
-        'image' => $banner->image ? (str_starts_with($banner->image, 'http') ? $banner->image : asset('storage/'.$banner->image)) : 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=2000&q=90',
-        'video' => $banner->video ? asset('storage/'.$banner->video) : null,
+        'image' => \App\Support\StoreMedia::url($banner->image),
         'link' => $banner->link ?: route('shop'),
         'button' => $banner->button_text ?: 'Shop now',
     ])->values();
+
+    if ($heroSlides->isEmpty()) {
+        $heroSlides = collect([
+            ['title' => "Case\nopen", 'subtitle' => 'Ready for a new finish?', 'image' => asset('images/tech/phone-case.jpg'), 'link' => route('shop'), 'button' => 'Shop now'],
+            ['title' => "Case\nopen", 'subtitle' => 'Ready for a new finish?', 'image' => asset('images/tech/tablet-case.jpg'), 'link' => route('shop'), 'button' => 'Shop now'],
+            ['title' => "Case\nopen", 'subtitle' => 'Ready for a new finish?', 'image' => asset('images/tech/earbuds-case.jpg'), 'link' => route('shop'), 'button' => 'Shop now'],
+        ]);
+    }
+
+    $quote = $testimonials->first();
+    $featuredProducts = $bestSellers->isNotEmpty() ? $bestSellers : ($trending->isNotEmpty() ? $trending : $newArrivals);
+    $featuredCategories = $categories->isNotEmpty() ? $categories : collect();
 @endphp
-<section class="relative min-h-[560px] md:min-h-[680px] h-[calc(100svh-106px)] md:h-[calc(100svh-120px)] max-h-[900px] overflow-hidden bg-stone-100"
-    x-data="{ active: 0 }"
-    @if($heroSlides->count() > 1) x-init="setInterval(() => active = (active + 1) % {{ $heroSlides->count() }}, 6000)" @endif>
-    @forelse($heroSlides as $index => $slide)
-        <div x-show="active === {{ $index }}" x-transition.opacity.duration.700ms class="absolute inset-0">
-            @if($slide['video'])
-                <video class="w-full h-full object-cover" autoplay muted loop playsinline poster="{{ $slide['image'] }}"><source src="{{ $slide['video'] }}"></video>
-            @elseif($slide['image'])
-                <img src="{{ $slide['image'] }}" alt="{{ $slide['title'] }}" class="w-full h-full object-cover">
-            @endif
-            <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent"></div>
-            <div class="absolute inset-0 max-w-[1440px] mx-auto px-5 sm:px-7 lg:px-12 flex items-end pb-14 sm:pb-20 lg:pb-28">
-                <div class="max-w-3xl min-w-0 text-white"><p class="eyebrow text-[#a9e56f] mb-4 sm:mb-5">MS Furniture · Designed for living</p><h1 class="font-display text-[clamp(2.75rem,8vw,5.5rem)] break-words leading-[.94] mb-5 sm:mb-7">{{ $slide['title'] }}</h1>@if($slide['subtitle'])<p class="max-w-xl text-sm sm:text-base text-white/80 leading-6 sm:leading-7 mb-6 sm:mb-8">{{ $slide['subtitle'] }}</p>@endif<a href="{{ $slide['link'] }}" class="inline-flex bg-[#9dde63] text-[#14331b] px-5 sm:px-7 py-3.5 sm:py-4 eyebrow hover:bg-white transition">{{ $slide['button'] }}</a></div>
+
+<section class="relative overflow-hidden bg-[#d5e4ef]"
+    x-data="{ active: 0, total: {{ $heroSlides->count() }} }"
+    @if($heroSlides->count() > 1) x-init="setInterval(() => active = (active + 1) % total, 5500)" @endif>
+    @foreach($heroSlides as $index => $slide)
+        @php
+            $count = $heroSlides->count();
+            $second = $count > 1 ? $heroSlides[($index + 1) % $count]['image'] : null;
+            $third = $count > 2 ? $heroSlides[($index + 2) % $count]['image'] : null;
+        @endphp
+        <div x-show="active === {{ $index }}" @if($index > 0) x-cloak @endif class="mx-auto grid min-h-[560px] max-w-[1440px] items-center gap-6 px-6 py-12 lg:min-h-[680px] lg:grid-cols-2 lg:px-16 lg:py-0">
+            <div class="max-w-xl">
+                <h1 class="font-marker text-[64px] text-[#2a241c] sm:text-[88px] lg:text-[104px]">{!! nl2br(e($slide['title'])) !!}</h1>
+                @if($slide['subtitle'])
+                    <p class="mt-4 text-xl text-[#2a241c] sm:text-2xl">{{ $slide['subtitle'] }}</p>
+                @endif
+                <a href="{{ $slide['link'] }}" class="mt-8 inline-flex bg-white px-8 py-3.5 text-[13px] font-semibold uppercase tracking-[.16em] text-black shadow-sm">{{ $slide['button'] }}</a>
+            </div>
+            <div class="relative h-[380px] sm:h-[480px] lg:h-[620px]">
+                @if($second)
+                    <img src="{{ $second }}" alt="" class="absolute right-[8%] top-[8%] w-[46%] rotate-6 rounded-[28px] object-cover shadow-xl" style="aspect-ratio:3/4">
+                @endif
+                <img src="{{ $slide['image'] }}" alt="{{ $slide['title'] }}" class="absolute left-[6%] top-[18%] w-[48%] -rotate-6 rounded-[28px] object-cover shadow-2xl {{ $second ? '' : 'left-auto right-[12%] w-[70%]' }}" style="aspect-ratio:3/4">
+                @if($third)
+                    <img src="{{ $third }}" alt="" class="absolute bottom-[6%] right-[18%] w-[34%] rotate-3 rounded-[24px] object-cover shadow-xl" style="aspect-ratio:1/1">
+                @endif
             </div>
         </div>
-    @empty
-        <img src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=2000&q=90" alt="MS Furniture living room collection" class="absolute inset-0 w-full h-full object-cover">
-        <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent"></div>
-        <div class="relative h-full max-w-[1440px] mx-auto px-5 sm:px-7 lg:px-12 flex items-end pb-14 sm:pb-20 lg:pb-28"><div class="max-w-3xl min-w-0 text-white"><p class="eyebrow text-[#a9e56f] mb-4 sm:mb-5">MS Furniture · Thoughtfully crafted</p><h1 class="font-display text-[clamp(2.75rem,8vw,5.5rem)] leading-[.94] mb-5 sm:mb-7">Spaces Worth<br><em>Living In.</em></h1><p class="max-w-xl text-sm sm:text-base text-white/80 leading-6 sm:leading-7 mb-6 sm:mb-8">Timeless furniture, thoughtfully crafted for the way you live.</p><a href="{{ route('shop') }}" class="inline-flex bg-[#9dde63] text-[#14331b] px-5 sm:px-7 py-3.5 sm:py-4 eyebrow hover:bg-white transition">Explore collection</a></div></div>
-    @endforelse
-    @if($heroSlides->count() > 1)<div class="absolute z-10 bottom-7 right-7 flex gap-2">@foreach($heroSlides as $index => $slide)<button @click="active={{ $index }}" class="h-1 transition-all" :class="active === {{ $index }} ? 'w-10 bg-[#9dde63]' : 'w-5 bg-white/50'" aria-label="Show slide {{ $index + 1 }}"></button>@endforeach</div>@endif
-</section>
-
-<section class="border-b border-[#252620]/10"><div class="max-w-[1440px] mx-auto grid grid-cols-2 lg:grid-cols-4 divide-x divide-[#252620]/10">
-@foreach([['truck','Delivery across India'],['leaf','Thoughtfully crafted'],['shield','5-year warranty'],['chat','Design consultation']] as $benefit)<div class="py-6 px-4 text-center"><p class="eyebrow text-[#75806a]">{{ $benefit[1] }}</p></div>@endforeach
-</div></section>
-
-@php
-    $luxuryCategories = [
-        ['Luxury Sofa', 'sofas', 'https://4zgwrv-td.myshopify.com/cdn/shop/collections/change-fabric-color-from-blue-to-pista-light-greaan-and-cream-with-royal-prints-on-sofa.png?v=1769483918&width=900'],
-        ['Luxury Beds', null, 'https://4zgwrv-td.myshopify.com/cdn/shop/collections/change-the-fabric-from-red-to-a-light-teal-and-beige-color-with-luxury-print-fabric.png?v=1769484275&width=900'],
-        ['Luxury Dining', 'tables-consoles', 'https://4zgwrv-td.myshopify.com/cdn/shop/collections/make-it-more-royal-and-change-its-fabric-to-very-light-orange-and-cream-luxury-print-fabric.png?v=1769484520&width=900'],
-        ['Luxury Chairs', 'chairs', 'https://4zgwrv-td.myshopify.com/cdn/shop/collections/make-design-of-chair-more-royal.png?v=1769484765&width=900'],
-        ['Luxury Consoles', 'tables-consoles', 'https://4zgwrv-td.myshopify.com/cdn/shop/collections/a-royal-luxury-console-table.png?v=1769484946&width=900'],
-    ];
-    $mainCategories = [
-        ['Luxury Furniture', null, 'https://4zgwrv-td.myshopify.com/cdn/shop/collections/luxury-royal-furniture-items.png?v=1769250767&width=1200'],
-        ['Modern Furniture', null, 'https://4zgwrv-td.myshopify.com/cdn/shop/collections/modern-furniture.png?v=1769251017&width=1200'],
-        ['Office Furniture', 'office-furniture', 'https://4zgwrv-td.myshopify.com/cdn/shop/collections/make-it-look-more-royal-and-luxury.png?v=1769255618&width=1200'],
-        ['Hotel & Project Furniture', null, 'https://4zgwrv-td.myshopify.com/cdn/shop/collections/hotel-project-design.png?v=1769513687&width=1200'],
-    ];
-@endphp
-<section class="bg-[#15331d] text-white py-14 lg:py-20 overflow-hidden">
-    <div class="max-w-[1500px] mx-auto px-5 lg:px-10">
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-5 mb-9 lg:mb-12">
-            <div><p class="eyebrow text-[#9ddc68] mb-3">Explore the collection</p><h2 class="font-display text-4xl lg:text-6xl">Furniture by category</h2></div>
-            <a href="{{ route('collections.all') }}" class="eyebrow text-white/70 border-b border-white/40 pb-2 hover:text-white">View all furniture →</a>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-6">
-            @foreach($luxuryCategories as [$name, $category, $image])
-                <a href="{{ $category ? route('shop', ['category' => $category]) : route('collections.all') }}" class="group min-w-0">
-                    <div class="aspect-[16/10] bg-white/5 overflow-hidden mb-4"><img src="{{ $image }}" alt="{{ $name }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" loading="lazy"></div>
-                    <h3 class="text-sm sm:text-base lg:text-lg uppercase tracking-[.04em] text-white/90 group-hover:text-[#9ddc68]">{{ $name }}</h3>
-                </a>
-            @endforeach
-        </div>
-    </div>
-</section>
-
-<section class="bg-white py-8 lg:py-12 overflow-hidden">
-    <div class="max-w-[1500px] mx-auto px-5 lg:px-10">
-        <div class="flex gap-5 lg:gap-7 overflow-x-auto snap-x hide-scrollbar pb-3">
-            @foreach($mainCategories as [$name, $category, $image])
-                <a href="{{ $category ? route('shop', ['category' => $category]) : route('collections.all') }}" class="group min-w-[82vw] sm:min-w-[45%] lg:min-w-[31%] snap-start">
-                    <div class="aspect-[16/6] bg-[#f2efe8] overflow-hidden mb-4"><img src="{{ $image }}" alt="{{ $name }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" loading="lazy"></div>
-                    <h3 class="font-display text-2xl lg:text-3xl">{{ $name }}</h3>
-                </a>
-            @endforeach
-        </div>
-    </div>
-</section>
-
-<section class="bg-[#111] text-white overflow-hidden border-y border-white/10">
-    <div class="py-5 whitespace-nowrap flex gap-10 text-sm sm:text-base uppercase tracking-[.08em] text-white/80 animate-[marquee_26s_linear_infinite]">
-        @foreach(range(1, 2) as $repeat)<span>35+ Years Experience</span><span>Custom Manufacturing</span><span>Premium Materials</span><span>Residential & Hotel Projects</span><span>Curated Collections</span>@endforeach
-    </div>
-</section>
-
-<section class="bg-[#dd884d] overflow-hidden">
-    <div class="grid lg:grid-cols-2 min-h-[440px] lg:min-h-[560px]">
-        <div class="min-h-[330px] lg:min-h-full"><img src="https://4zgwrv-td.myshopify.com/cdn/shop/files/wooden-materials-craftmanship.png?v=1769254789&width=1800" alt="MS Furniture materials and craftsmanship" class="w-full h-full object-cover" loading="lazy"></div>
-        <div class="bg-[#15331d] text-white flex items-center justify-center text-center px-7 py-16 lg:p-16">
-            <div class="max-w-md"><p class="eyebrow text-[#9ddc68] mb-5">Inside every piece</p><h2 class="font-display text-4xl lg:text-6xl mb-6">Materials & craftsmanship</h2><p class="text-white/70 leading-7 mb-9">Handcrafted for enduring quality with carefully selected timber, premium upholstery and master-applied finishes.</p><a href="{{ route('materials') }}" class="inline-flex rounded-full bg-[#eab792] text-[#222822] px-7 py-4 eyebrow hover:bg-white">View materials</a></div>
-        </div>
-    </div>
-    <div class="grid lg:grid-cols-[.84fr_1.16fr] min-h-[440px] lg:min-h-[570px]">
-        <div class="flex items-center justify-center px-7 py-16 lg:p-16 order-2 lg:order-1">
-            <div class="max-w-md"><p class="eyebrow text-[#603319] mb-5">Spaces we have shaped</p><h2 class="font-display text-4xl lg:text-6xl mb-6">Our Projects</h2><p class="text-[#4b2818]/80 leading-7 mb-9">From private residences and celebrity homes to government and large-scale hospitality projects, explore a selection of our completed work.</p><a href="{{ route('collections.all') }}" class="inline-flex rounded-full bg-[#f6dcc8] text-[#222822] px-7 py-4 eyebrow hover:bg-white">View all projects</a></div>
-        </div>
-        <div class="grid grid-cols-3 min-h-[330px] lg:min-h-full order-1 lg:order-2">
-            <img src="https://4zgwrv-td.myshopify.com/cdn/shop/files/change-sofa-chair-color-to-beige.png?v=1769481930&width=900" alt="Luxury residential furniture project" class="w-full h-full object-cover" loading="lazy">
-            <img src="https://4zgwrv-td.myshopify.com/cdn/shop/files/ChatGPT_Image_Jan_27_2026_08_05_12_AM.png?v=1769481332&width=900" alt="Luxury hospitality interior project" class="w-full h-full object-cover" loading="lazy">
-            <img src="https://4zgwrv-td.myshopify.com/cdn/shop/collections/hotel-project-design.png?v=1769513687&width=900" alt="MS Furniture hotel project" class="w-full h-full object-cover" loading="lazy">
-        </div>
-    </div>
-</section>
-
-<section id="rooms" class="max-w-[1440px] mx-auto px-5 lg:px-10 py-20 lg:py-28">
-    <div class="text-center max-w-2xl mx-auto mb-12"><p class="eyebrow text-[#75806a] mb-4">Spaces to settle into</p><h2 class="font-display text-4xl lg:text-6xl mb-5">Shop by room</h2><p class="text-stone-500 leading-7">Thoughtful foundations and finishing touches for every corner of your home.</p></div>
-    @if($categories->isNotEmpty())
-        <div class="grid sm:grid-cols-2 lg:grid-cols-12 gap-4 lg:gap-6">
-            @foreach($categories as $category)
-                @php
-                    $categoryImage = $category->image
-                        ? (str_starts_with($category->image, 'http') ? $category->image : asset('storage/'.$category->image))
-                        : asset('images/product-placeholder.svg');
-                @endphp
-                <a href="{{ route('shop', ['category' => $category->slug]) }}"
-                   class="group relative overflow-hidden min-h-[320px] {{ $loop->first ? 'lg:col-span-7 lg:row-span-2 lg:min-h-[680px]' : 'lg:col-span-5' }}">
-                    <img src="{{ $categoryImage }}" class="w-full h-full absolute inset-0 object-cover group-hover:scale-105 transition duration-700" alt="{{ $category->name }} furniture">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                    <div class="absolute inset-x-0 bottom-0 p-6 lg:p-8 flex items-end justify-between gap-4 text-white">
-                        <span class="font-display text-3xl lg:text-4xl">{{ $category->name }}</span>
-                        <span class="w-10 h-10 rounded-full border border-white/50 grid place-items-center group-hover:bg-white group-hover:text-[#17351d] transition">→</span>
-                    </div>
-                </a>
+    @endforeach
+    @if($heroSlides->count() > 1)
+        <div class="absolute bottom-5 left-0 right-0 z-10 flex justify-center gap-2">
+            @foreach($heroSlides as $index => $slide)
+                <button type="button" @click="active = {{ $index }}" class="h-1.5 rounded-full bg-[#2a241c] transition-all" :class="active === {{ $index }} ? 'w-6' : 'w-1.5 opacity-40'" aria-label="Slide {{ $index + 1 }}"></button>
             @endforeach
         </div>
     @endif
 </section>
 
-@if($collections->isNotEmpty())
-<section id="collections" class="bg-[#0B2818] text-white py-20 lg:py-28 overflow-hidden scroll-mt-32">
-    <div class="max-w-[1440px] mx-auto px-5 lg:px-10"><div class="max-w-2xl mb-12"><p class="eyebrow text-[#9DDC68] mb-4">Curated collections</p><h2 class="font-display text-4xl lg:text-6xl">The Art of Living Beautifully</h2></div>
-    <div class="flex gap-5 overflow-x-auto snap-x hide-scrollbar pb-3">@foreach($collections as $collection)<a href="{{ route('shop',['search'=>$collection->name]) }}" class="group min-w-[82vw] sm:min-w-[48%] lg:min-w-[31%] snap-start"><div class="aspect-[4/5] overflow-hidden bg-white/5 mb-5"><img src="{{ $collection->image ? (str_starts_with($collection->image,'http') ? $collection->image : asset('storage/'.$collection->image)) : asset('images/product-placeholder.svg') }}" alt="{{ $collection->name }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" loading="lazy"></div><h3 class="font-display text-3xl mb-2">{{ $collection->name }}</h3><p class="text-sm text-white/60 line-clamp-2 mb-4">{{ $collection->description }}</p><span class="eyebrow text-[#9DDC68]">Explore collection →</span></a>@endforeach</div></div>
+<div class="border-b border-black/5 bg-white">
+    <div class="flex gap-2 overflow-x-auto hide-scrollbar px-4 py-5 sm:px-6">
+        @foreach($bubbles as [$name, $category, $image])
+            <a href="{{ route('shop', ['category' => $category]) }}" class="w-[92px] shrink-0 text-center sm:w-[108px]">
+                <span class="mx-auto mb-2 grid h-[84px] w-[84px] place-items-center overflow-hidden rounded-full bg-[#f4f4f4] sm:h-[96px] sm:w-[96px]">
+                    <img src="{{ $image }}" alt="{{ $name }}" class="h-full w-full object-cover" loading="lazy">
+                </span>
+                <span class="block text-[10px] font-semibold uppercase tracking-[.06em] sm:text-[11px]">{{ $name }}</span>
+            </a>
+        @endforeach
+    </div>
+</div>
+
+<section class="mx-auto max-w-3xl px-6 py-12 text-center">
+    <blockquote class="text-[15px] font-medium leading-relaxed sm:text-lg">“{{ $quote->content ?? 'A finish you actually want people to see.' }}”</blockquote>
+    <p class="mt-3 text-[13px] tracking-[.2em] text-[#1f9d4a]">★★★★★</p>
+    @if($quote)
+        <p class="mt-2 text-[12px] uppercase tracking-[.14em] text-black/50">{{ $quote->name }}@if($quote->role) · {{ $quote->role }}@endif</p>
+    @endif
+</section>
+
+<section class="px-3 pb-3 sm:px-4">
+    <a href="{{ route('shop') }}" class="group relative block min-h-[320px] overflow-hidden bg-[#1a1714] sm:min-h-[460px]">
+        <img src="{{ asset('images/tech/hero-tech.jpg') }}" alt="" class="absolute inset-0 h-full w-full object-cover opacity-80 transition duration-700 group-hover:scale-105">
+        <span class="absolute inset-0 bg-black/35"></span>
+        <span class="relative flex min-h-[320px] flex-col items-center justify-center px-6 text-center text-white sm:min-h-[460px]">
+            <span class="text-[11px] font-semibold uppercase tracking-[.28em]">The new edit</span>
+            <span class="font-display mt-3 text-4xl sm:text-6xl">Everyday tech</span>
+            <span class="mt-6 bg-[#f3ead7] px-6 py-3 text-[12px] font-semibold uppercase tracking-[.16em] text-black">Shop now</span>
+        </span>
+    </a>
+</section>
+
+<section class="px-3 pb-4 sm:px-4">
+    <ul class="grid grid-cols-2 gap-3 sm:gap-4">
+        @foreach($mosaic as [$name, $category, $image, $sale])
+            <li>
+                <a href="{{ $category ? route('shop', ['category' => $category]) : route('shop') }}" class="group relative block min-h-[240px] overflow-hidden sm:min-h-[360px] lg:min-h-[460px]">
+                    <img src="{{ $image }}" alt="{{ $name }}" class="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" loading="lazy">
+                    <span class="absolute inset-0 bg-black/25"></span>
+                    @if($sale)
+                        <span class="absolute left-3 top-3 grid h-12 w-12 place-items-center rounded-full bg-[#ffe14a] text-[10px] font-bold uppercase">Sale</span>
+                    @endif
+                    <span class="absolute inset-0 flex flex-col items-center justify-center px-4 text-center text-white">
+                        <span class="mb-3 text-[13px] font-bold uppercase tracking-[.14em] sm:text-base">{{ $name }}</span>
+                        <span class="bg-white px-4 py-2 text-[11px] font-semibold uppercase tracking-[.14em] text-black">View all</span>
+                    </span>
+                </a>
+            </li>
+        @endforeach
+    </ul>
+</section>
+
+<section class="bg-[#f3f3f3] px-4 py-14">
+    <div class="mx-auto max-w-3xl text-center">
+        <p class="mb-4 text-[13px] font-semibold uppercase tracking-[.18em]">Want first look at the next drop?</p>
+        @livewire('store.newsletter-signup', ['tone' => 'green'])
+    </div>
+</section>
+
+@if($featuredCategories->isNotEmpty())
+<section class="mx-auto max-w-[1200px] px-5 py-14 lg:px-8">
+    <h2 class="text-[13px] font-semibold uppercase tracking-[.18em]">Featured</h2>
+    <p class="mt-1 text-sm text-black/55">Shop the latest favourites</p>
+    <ul class="mt-8 flex gap-4 overflow-x-auto hide-scrollbar pb-2">
+        @foreach($featuredCategories as $category)
+            <li class="w-[150px] shrink-0 sm:w-[170px]">
+                <a href="{{ route('shop', ['category' => $category->slug]) }}" class="block text-center">
+                    <span class="mb-3 grid aspect-[3/4] place-items-center bg-white">
+                        <img src="{{ \App\Support\StoreMedia::url($category->image) }}" alt="{{ $category->name }}" class="h-[82%] w-[82%] object-contain" loading="lazy">
+                    </span>
+                    <span class="block text-[11px] font-semibold uppercase tracking-[.06em]">{{ $category->name }}</span>
+                </a>
+            </li>
+        @endforeach
+    </ul>
 </section>
 @endif
 
-@php $featured=$bestSellers->isNotEmpty()?$bestSellers:($trending->isNotEmpty()?$trending:$newArrivals); @endphp
-@if($featured->isNotEmpty())<section class="bg-[#eee9df] py-20 lg:py-28"><div class="max-w-[1440px] mx-auto px-5 lg:px-10"><div class="flex items-end justify-between mb-10"><div><p class="eyebrow text-[#75806a] mb-3">Loved for a reason</p><h2 class="font-display text-4xl lg:text-6xl">The most wanted</h2></div><a href="{{ route('shop',['sort'=>'popular']) }}" class="hidden sm:flex items-center gap-2 eyebrow border-b border-[#252620] pb-1">View all <span>→</span></a></div><div class="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 lg:gap-6">@foreach($featured->take(8) as $product)<x-product-card :product="$product" />@endforeach</div></div></section>@endif
-
-<section class="w-full max-w-[1440px] mx-auto px-4 sm:px-5 lg:px-10 py-14 sm:py-20 lg:py-28 overflow-hidden"><div class="grid grid-cols-1 lg:grid-cols-2 items-stretch bg-[#173B25] text-white overflow-hidden"><div class="w-full min-w-0 h-[300px] sm:h-[420px] lg:h-auto lg:min-h-[520px]"><img src="{{ $categories->first()?->image ? (str_starts_with($categories->first()->image,'http') ? $categories->first()->image : asset('storage/'.$categories->first()->image)) : asset('images/product-placeholder.svg') }}" alt="MS Furniture craftsmanship" class="block w-full h-full object-cover" loading="lazy"></div><div class="w-full min-w-0 p-6 py-10 sm:p-12 lg:p-16 xl:p-20"><p class="eyebrow text-[#9DDC68] mb-4 sm:mb-5">Made with intention</p><h2 class="font-display text-[2.25rem] sm:text-5xl lg:text-6xl leading-[1.02] mb-5 sm:mb-6 break-words">Designed for Living.<br class="hidden sm:block"> Made to Last.</h2><p class="text-sm sm:text-base text-white/75 leading-6 sm:leading-7 mb-7 sm:mb-8 max-w-md">Thoughtful proportions, enduring materials and skilled workmanship come together in furniture created for everyday comfort and years of living.</p><a href="{{ route('about') }}" class="inline-flex max-w-full items-center gap-3 eyebrow border-b border-white pb-2">Discover our story <span>→</span></a></div></div></section>
-
-@if($newArrivals->isNotEmpty())<section class="max-w-[1440px] mx-auto px-5 lg:px-10 pb-24"><div class="text-center mb-10"><p class="eyebrow text-[#75806a] mb-3">Freshly arrived</p><h2 class="font-display text-4xl lg:text-6xl">New to the collection</h2></div><div class="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 lg:gap-6">@foreach($newArrivals->take(4) as $product)<x-product-card :product="$product" />@endforeach</div></section>@endif
-
-@if($featured->isNotEmpty())
-@php $lookProduct = $featured->first(); $lookImage = $lookProduct->images->first()?->path; @endphp
-<section class="max-w-[1440px] mx-auto px-5 lg:px-10 pb-20 lg:pb-28" x-data="{open:false}"><div class="text-center mb-10"><p class="eyebrow text-[#777D73] mb-3">Room inspiration</p><h2 class="font-display text-4xl lg:text-6xl">Shop the Look</h2></div><div class="relative aspect-[4/5] md:aspect-[16/8] overflow-hidden bg-[#F2EFE8]"><img src="{{ $lookImage ? (str_starts_with($lookImage,'http') ? $lookImage : asset('storage/'.$lookImage)) : asset('images/product-placeholder.svg') }}" alt="A considered room by MS Furniture" class="w-full h-full object-cover" loading="lazy"><button @click="open=!open" class="absolute left-[54%] top-[54%] w-11 h-11 rounded-full bg-white text-[#0B2818] shadow-lg grid place-items-center text-xl" aria-label="View {{ $lookProduct->name }}" :aria-expanded="open">+</button><div x-show="open" x-cloak x-transition @click.outside="open=false" class="absolute left-[8%] md:left-[56%] top-[63%] w-[84%] md:w-72 bg-white p-4 shadow-xl flex gap-4"><div class="w-20 aspect-square bg-[#F2EFE8] overflow-hidden"><img src="{{ $lookImage ? (str_starts_with($lookImage,'http') ? $lookImage : asset('storage/'.$lookImage)) : asset('images/product-placeholder.svg') }}" alt="" class="w-full h-full object-cover"></div><div><p class="font-display text-xl leading-tight">{{ $lookProduct->name }}</p><p class="text-sm mt-1 mb-3">₹{{ number_format($lookProduct->effectivePrice(),0) }}</p><a href="{{ route('products.show',$lookProduct) }}" class="eyebrow border-b border-[#222822]">View product</a></div></div></div></section>
-@endif
-
-<section class="bg-[#F2EFE8] py-20 lg:py-28"><div class="max-w-[1440px] mx-auto px-5 lg:px-10"><div class="text-center max-w-2xl mx-auto mb-12"><p class="eyebrow text-[#777D73] mb-4">Our approach</p><h2 class="font-display text-4xl lg:text-6xl">Craftsmanship in Every Detail</h2></div><div class="grid md:grid-cols-3 border-y border-[#222822]/15 divide-y md:divide-y-0 md:divide-x divide-[#222822]/15">@foreach([['01','Responsibly Selected Materials','Materials chosen for their character, performance and enduring beauty.'],['02','Built for Everyday Living','Comfort and durability considered in every proportion and finish.'],['03','Designed with Purpose','Quietly distinctive pieces made to work beautifully in real homes.']] as $item)<article class="py-10 md:px-10 first:pl-0 last:pr-0"><span class="eyebrow text-[#9aab8c]">{{ $item[0] }}</span><h3 class="font-display text-3xl mt-8 mb-4">{{ $item[1] }}</h3><p class="text-sm leading-7 text-[#777D73]">{{ $item[2] }}</p></article>@endforeach</div></div></section>
-
-@if($trending->isNotEmpty())<section class="max-w-[1440px] mx-auto px-5 lg:px-10 py-20 lg:py-28"><div class="flex items-end justify-between mb-10"><div><p class="eyebrow text-[#777D73] mb-3">Current favourites</p><h2 class="font-display text-4xl lg:text-6xl">Trending Now</h2></div><a href="{{ route('shop',['sort'=>'popular']) }}" class="eyebrow border-b border-[#222822] pb-1">View all →</a></div><div class="flex gap-5 overflow-x-auto snap-x hide-scrollbar">@foreach($trending as $product)<div class="min-w-[68vw] sm:min-w-[38%] lg:min-w-[23%] snap-start"><x-product-card :product="$product" /></div>@endforeach</div></section>@endif
-
-<section class="border-y border-[#E5E8E0] py-16"><div class="max-w-[1440px] mx-auto px-5 lg:px-10 grid grid-cols-2 lg:grid-cols-5 gap-y-10">@foreach([['◇','Premium Quality'],['✦','Thoughtful Design'],['→','Reliable Delivery'],['○','Long-Lasting Comfort'],['+','Customer Support']] as $value)<div class="text-center lg:border-r last:border-0 border-[#E5E8E0] px-3"><span class="font-display text-3xl text-[#668657]">{{ $value[0] }}</span><p class="eyebrow mt-4">{{ $value[1] }}</p></div>@endforeach</div></section>
-
-@if($testimonials->isNotEmpty())
-<section class="bg-[#17351d] text-white py-20 lg:py-28 overflow-hidden">
-    <div class="max-w-[1440px] mx-auto px-5 lg:px-10">
-        <div class="grid lg:grid-cols-[.7fr_1.3fr] gap-12 lg:gap-24 items-start">
-            <div><p class="eyebrow text-[#9dde63] mb-4">At home with you</p><h2 class="font-display text-4xl lg:text-6xl leading-tight">Pieces that become part of the story.</h2></div>
-            <div class="grid sm:grid-cols-2 gap-5">
-                @foreach($testimonials->take(4) as $testimonial)
-                <figure class="border border-white/15 p-7 lg:p-9 bg-white/[.03]">
-                    <div class="text-[#9dde63] tracking-[.25em] text-xs mb-6">{{ str_repeat('★', $testimonial->rating) }}</div>
-                    <blockquote class="font-display text-2xl leading-snug mb-8">“{{ $testimonial->content }}”</blockquote>
-                    <figcaption class="text-xs uppercase tracking-[.14em] text-white/55"><span class="text-white">{{ $testimonial->name }}</span>@if($testimonial->role) · {{ $testimonial->role }}@endif</figcaption>
-                </figure>
-                @endforeach
-            </div>
-        </div>
+@if($featuredProducts->isNotEmpty())
+<section class="mx-auto max-w-[1440px] px-4 pb-16 sm:px-6">
+    <h2 class="mb-6 text-[13px] font-semibold uppercase tracking-[.18em]">Recommended for you</h2>
+    <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        @foreach($featuredProducts->take(4) as $product)
+            <x-commerce-card :product="$product" />
+        @endforeach
     </div>
 </section>
 @endif
 
-@if($instagram->isNotEmpty())
-<section class="max-w-[1440px] mx-auto px-5 lg:px-10 py-20 lg:py-28">
-    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-5 mb-10"><div><p class="eyebrow text-[#75806a] mb-3">In real homes</p><h2 class="font-display text-4xl lg:text-6xl">The MS community</h2></div><p class="text-sm text-stone-500">Tag <strong class="text-[#17351d]">@msfurniture</strong> to share your space.</p></div>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">@foreach($instagram->take(8) as $post)<a href="{{ $post->link ?: '#' }}" class="group aspect-square overflow-hidden bg-stone-100"><img src="{{ str_starts_with($post->image, 'http') ? $post->image : asset('storage/'.$post->image) }}" alt="MS Furniture in a customer home" class="w-full h-full object-cover group-hover:scale-105 transition duration-700"></a>@endforeach</div>
+@include('partials.trust-row')
+
+<section class="bg-white py-10 text-center">
+    <a href="{{ $storeSettings['instagram_url'] }}" class="inline-flex items-center gap-2 text-sm">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="16" height="16" rx="4"/><circle cx="12" cy="12" r="3.5"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor"/></svg>
+        Join us on Instagram
+    </a>
 </section>
-@endif
-
-@if($journal->isNotEmpty())
-<section class="max-w-[1440px] mx-auto px-5 lg:px-10 pb-20 lg:pb-28"><div class="flex items-end justify-between mb-10"><div><p class="eyebrow text-[#777D73] mb-3">Design inspiration</p><h2 class="font-display text-4xl lg:text-6xl">From the Journal</h2></div><a href="{{ route('blog.index') }}" class="eyebrow border-b border-[#222822] pb-1">Explore all →</a></div><div class="grid md:grid-cols-3 gap-6">@foreach($journal as $article)<article class="group"><a href="{{ route('blog.show',$article) }}" class="block aspect-[4/3] overflow-hidden bg-[#F2EFE8] mb-5"><img src="{{ $article->featured_image ? (str_starts_with($article->featured_image,'http') ? $article->featured_image : asset('storage/'.$article->featured_image)) : asset('images/product-placeholder.svg') }}" alt="{{ $article->title }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" loading="lazy"></a><p class="eyebrow text-[#777D73] mb-3">{{ $article->blogCategory?->name ?? 'Journal' }} · {{ $article->published_at->format('d M Y') }}</p><h3 class="font-display text-3xl leading-tight mb-4"><a href="{{ route('blog.show',$article) }}">{{ $article->title }}</a></h3><a href="{{ route('blog.show',$article) }}" class="eyebrow border-b border-[#222822]">Read article</a></article>@endforeach</div></section>
-@endif
-
-<section class="bg-[#0B2818] text-white py-20 lg:py-28 px-5 text-center"><p class="eyebrow text-[#9DDC68] mb-4">The MS Furniture edit</p><h2 class="font-display text-4xl lg:text-6xl mb-5">A More Beautiful Home Starts Here.</h2><p class="max-w-xl mx-auto text-white/60 mb-8 leading-7">Design inspiration, new collections and considered updates, delivered occasionally.</p><div class="max-w-lg mx-auto">@livewire('store.newsletter-signup')</div></section>
 </div>

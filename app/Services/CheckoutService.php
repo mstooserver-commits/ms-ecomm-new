@@ -92,6 +92,9 @@ class CheckoutService
 
                 $item->product->increment('sales_count', $item->quantity);
                 $item->product->decrement('stock', $item->quantity);
+                if ($item->product_variant_id) {
+                    $item->variant?->decrement('stock', $item->quantity);
+                }
             }
 
             OrderStatusHistory::create([

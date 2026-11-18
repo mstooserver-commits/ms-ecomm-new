@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Category;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
@@ -22,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        View::composer('layouts.store', function ($view) {
+        View::composer(['layouts.store', 'livewire.store.home-page'], function ($view) {
             $defaults = [
                 'announcement' => 'Luxury & custom furniture · Visit our Mohali showroom',
                 'footer_story' => 'Bespoke furniture made with premium woods, master-applied finishes and lasting comfort in Mohali, Punjab.',
@@ -41,7 +42,12 @@ class AppServiceProvider extends ServiceProvider
                 }
             }
 
+            $categories = Schema::hasTable('categories')
+                ? Category::active()->orderBy('sort_order')->orderBy('name')->get()
+                : collect();
+
             $view->with('storeSettings', $defaults);
+            $view->with('navCategories', $categories);
         });
     }
 }

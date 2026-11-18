@@ -1,32 +1,173 @@
-<div class="max-w-[1440px] mx-auto px-5 lg:px-10 py-8 lg:py-14" x-data="{zoom:false}">
-<nav class="text-[10px] uppercase tracking-[.16em] text-stone-400 mb-8"><a href="{{ route('home') }}">Home</a> <span class="mx-2">/</span> <a href="{{ route('shop') }}">Catalogue</a> <span class="mx-2">/</span> <span class="text-[#252620]">{{ $product->name }}</span></nav>
-<div class="grid lg:grid-cols-[1.15fr_.85fr] gap-10 lg:gap-20">
-<div>@php $images=$product->images;$mainImage=$images[$selectedImage]??null;$src=$mainImage?->path; @endphp
-<button class="block w-full aspect-[5/6] bg-[#eee9df] overflow-hidden cursor-zoom-in" @click="zoom=true"><img src="{{ $src ? (str_starts_with($src,'http')?$src:asset('storage/'.$src)) : asset('images/product-placeholder.svg') }}" alt="{{ $product->name }}" class="w-full h-full object-cover hover:scale-[1.02] transition duration-700"></button>
-@if($images->count()>1)<div class="flex gap-3 mt-3 overflow-x-auto">@foreach($images as $i=>$img)<button wire:click="$set('selectedImage',{{ $i }})" class="w-24 aspect-square border {{ $selectedImage===$i?'border-[#252620]':'border-transparent' }} overflow-hidden"><img src="{{ str_starts_with($img->path,'http')?$img->path:asset('storage/'.$img->path) }}" class="w-full h-full object-cover" alt=""></button>@endforeach</div>@endif</div>
-<div class="lg:pt-8 lg:sticky lg:top-32 self-start"><p class="eyebrow text-[#75806a] mb-4">{{ $product->category?->name ?? 'MS Furniture' }}</p><h1 class="font-display text-4xl lg:text-6xl leading-tight mb-5">{{ $product->name }}</h1>
-<p class="text-stone-600 leading-7 mb-8">{{ $product->short_description }}</p>
-@if(!empty($product->available_sizes) || !empty($product->available_colors))<div class="mb-8 space-y-5">@if(!empty($product->available_sizes))<div><p class="eyebrow text-[#75806a] mb-3">Available sizes</p><div class="flex flex-wrap gap-2">@foreach($product->available_sizes as $size)<span class="px-5 py-3 border border-[#252620]/20 text-sm">{{ $size }}</span>@endforeach</div></div>@endif @if(!empty($product->available_colors))<div><p class="eyebrow text-[#75806a] mb-3">Available finishes</p><div class="flex flex-wrap gap-2">@foreach($product->available_colors as $finish)<span class="px-5 py-3 border border-[#252620]/20 text-sm">{{ $finish }}</span>@endforeach</div></div>@endif</div>@endif
-@php
-    $whatsapp = preg_replace('/\D+/', '', $whatsappNumber);
-    $details = [
-        'Hello, I am interested in this furniture:',
-        'Product: '.$product->name,
-        'Code: '.$product->sku,
-        $product->category ? 'Category: '.$product->category->name : null,
-        !empty($product->available_sizes) ? 'Sizes: '.implode(', ', $product->available_sizes) : null,
-        !empty($product->available_colors) ? 'Finishes: '.implode(', ', $product->available_colors) : null,
-        'Link: '.route('products.show', $product),
-        '',
-        'Please share more details.',
-    ];
-    $whatsappText = rawurlencode(implode("\n", array_filter($details, fn ($line) => $line !== null)));
-@endphp
-<div class="grid sm:grid-cols-2 gap-3 mb-7"><a href="https://wa.me/{{ $whatsapp }}?text={{ $whatsappText }}" target="_blank" rel="noopener" class="btn-dark">Enquire on WhatsApp <span>→</span></a><a href="#product-enquiry" class="btn-light">Request details</a></div>
-<div class="grid grid-cols-2 gap-3 border-y border-[#252620]/15 py-5 mb-7 text-xs"><span>✓ Design consultation</span><span>✓ Delivery across India</span><span>✓ Custom sizes available</span><span>✓ Material guidance</span></div>
-<div id="product-enquiry" class="bg-[#eef3e8] p-6 mb-7 scroll-mt-32"><p class="font-display text-3xl mb-2">Enquire about this piece</p><p class="text-sm text-stone-500 mb-5">Leave your details and our team will contact you.</p><form action="{{ route('inquiries.store') }}" method="post" class="space-y-3">@csrf<input type="hidden" name="type" value="product"><input type="hidden" name="product_id" value="{{ $product->id }}"><input name="name" required placeholder="Your name" class="w-full border border-[#17351d]/20 px-4 py-3 bg-white"><input name="phone" required placeholder="WhatsApp / phone" class="w-full border border-[#17351d]/20 px-4 py-3 bg-white"><input name="city" placeholder="City" class="w-full border border-[#17351d]/20 px-4 py-3 bg-white"><textarea name="message" rows="3" placeholder="Questions, size or finish requirements" class="w-full border border-[#17351d]/20 px-4 py-3 bg-white"></textarea><button class="btn-dark w-full" type="submit">Send product enquiry</button></form></div>
-@foreach([['Details',$product->description],['Delivery & care',$product->shipping_info],['Dimensions & materials',$product->specifications]] as $detail) @if($detail[1])<details class="border-b border-[#252620]/15 py-5 group"><summary class="eyebrow cursor-pointer flex justify-between">{{ $detail[0] }} <span class="text-lg font-normal group-open:rotate-45 transition">+</span></summary><div class="mt-4 text-sm leading-7 text-stone-600">{!! nl2br(e($detail[1])) !!}</div></details>@endif @endforeach
-</div></div>
-@if($related->isNotEmpty())<section class="mt-24 lg:mt-32 border-t border-[#252620]/15 pt-16"><div class="text-center mb-10"><p class="eyebrow text-[#75806a] mb-3">Complete the room</p><h2 class="font-display text-4xl lg:text-5xl">You may also like</h2></div><div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-7">@foreach($related as $p)<x-product-card :product="$p" />@endforeach</div></section>@endif
-<div x-show="zoom" x-cloak @keydown.escape.window="zoom=false" class="fixed inset-0 z-[80] bg-[#252620]/95 p-6 lg:p-12 flex items-center justify-center" @click.self="zoom=false"><button @click="zoom=false" class="absolute top-6 right-6 text-white text-4xl">×</button><img src="{{ $src ? (str_starts_with($src,'http')?$src:asset('storage/'.$src)) : '' }}" class="max-w-full max-h-full object-contain" alt="{{ $product->name }}"></div>
+<div class="mx-auto max-w-[1440px] px-4 py-6 sm:px-6 lg:px-8 lg:py-10" x-data="{ zoom: false }">
+    <nav class="mb-6 text-[11px] uppercase tracking-[.12em] text-black/45">
+        <a href="{{ route('home') }}">Home</a>
+        <span class="mx-1.5">/</span>
+        @if($product->category)
+            <a href="{{ route('shop', ['category' => $product->category->slug]) }}">{{ $product->category->name }}</a>
+            <span class="mx-1.5">/</span>
+        @endif
+        <span class="text-black">{{ $product->name }}</span>
+    </nav>
+
+    <div class="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-10">
+        <div class="lg:col-start-1">
+            @php $images = $product->images; $mainImage = $images[$selectedImage] ?? null; $src = $mainImage?->path; @endphp
+            <button type="button" class="block aspect-square w-full overflow-hidden bg-[#f6f6f6]" @click="zoom = true">
+                <img src="{{ \App\Support\StoreMedia::url($src) }}" alt="{{ $product->name }}" class="h-full w-full object-contain">
+            </button>
+            @if($images->count() > 1)
+                <div class="mt-2 flex gap-2 overflow-x-auto">
+                    @foreach($images as $i => $img)
+                        <button type="button" wire:click="$set('selectedImage', {{ $i }})" class="h-16 w-16 shrink-0 overflow-hidden border bg-[#f6f6f6] {{ $selectedImage === $i ? 'border-black' : 'border-transparent' }}">
+                            <img src="{{ \App\Support\StoreMedia::url($img->path) }}" class="h-full w-full object-cover" alt="">
+                        </button>
+                    @endforeach
+                </div>
+            @endif
+
+        </div>
+
+        <div class="lg:sticky lg:top-24 lg:col-start-2 lg:row-start-1 lg:row-span-2">
+            <div class="mb-3 flex flex-wrap gap-1.5">
+                @if($product->isOnSale())<span class="bg-[#ffe14a] px-2 py-1 text-[10px] font-bold uppercase">Sale</span>@endif
+                @if($product->is_new_arrival)<span class="bg-black px-2 py-1 text-[10px] font-bold uppercase text-white">New</span>@endif
+            </div>
+            <h1 class="mb-2 text-[28px] font-semibold leading-tight">{{ $product->name }}</h1>
+            <p class="mb-4 text-[13px] text-black/50">{{ $product->category?->name }}</p>
+            <p class="mb-5 text-lg">
+                @if($product->isOnSale())
+                    <span class="mr-2 font-normal text-[#e23b3b]/70 line-through">₹{{ number_format($product->compare_at_price, 0) }}</span>
+                    <span class="font-semibold text-[#e23b3b]">₹{{ number_format($product->effectivePrice(), 0) }}</span>
+                @else
+                    <span class="font-semibold">₹{{ number_format($product->effectivePrice(), 0) }}</span>
+                @endif
+            </p>
+
+            <ul class="mb-5 space-y-1.5 text-[13px] text-black/75">
+                <li>Free shipping to India for orders over ₹{{ number_format(config('shop.free_shipping_threshold'), 0) }}</li>
+                <li>Phone cases, charging and matching accessories</li>
+            </ul>
+
+            @if($product->variants->isNotEmpty())
+                <label class="mb-4 block">
+                    <span class="sr-only">Finish</span>
+                    <select wire:model.live="variantId" class="w-full rounded-full border border-black/20 bg-white px-4 py-3 text-sm">
+                        @foreach($product->variants as $variant)
+                            <option value="{{ $variant->id }}" @disabled(! $variant->is_active || $variant->stock < 1)>
+                                {{ trim(($variant->color ?: '').' '.($variant->size ?: '')) ?: 'Standard' }}
+                            </option>
+                        @endforeach
+                    </select>
+                </label>
+                @error('variantId') <p class="mb-3 text-sm text-red-600">{{ $message }}</p> @enderror
+            @endif
+
+            <div class="mb-4 flex items-center gap-3">
+                <div class="flex border border-black">
+                    <button type="button" wire:click="decrementQuantity" class="px-4 py-3">−</button>
+                    <span class="min-w-10 px-4 py-3 text-center">{{ $quantity }}</span>
+                    <button type="button" wire:click="incrementQuantity" class="px-4 py-3">+</button>
+                </div>
+                <button type="button" wire:click="toggleWishlist" class="border-b border-black pb-0.5 text-[12px] font-semibold uppercase tracking-[.12em]">{{ $inWishlist ? 'Saved' : 'Save' }}</button>
+            </div>
+            @error('quantity') <p class="mb-3 text-sm text-red-600">{{ $message }}</p> @enderror
+
+            <div class="mb-3 grid gap-3 sm:grid-cols-2">
+                <button type="button" wire:click="addToCart" wire:loading.attr="disabled" class="btn-dark w-full">Add to cart</button>
+                <button type="button" wire:click="buyNow" wire:loading.attr="disabled" class="btn-light w-full">Buy now</button>
+            </div>
+            @if($cartMessage)<p class="mb-3 text-sm">{{ $cartMessage }}</p>@endif
+
+            @if($related->isNotEmpty())
+                @php $extra = $related->first(); @endphp
+                <div class="mt-6 border border-black/10 p-4">
+                    <p class="mb-3 text-[12px] font-semibold uppercase tracking-[.16em]">Add accessories</p>
+                    <div class="grid grid-cols-[88px_minmax(0,1fr)] gap-3">
+                        <a href="{{ route('products.show', $extra) }}" class="block bg-[#f6f6f6]">
+                            <img src="{{ \App\Support\StoreMedia::url($extra->images->first()?->path) }}" alt="{{ $extra->name }}" class="aspect-square w-full object-contain">
+                        </a>
+                        <div>
+                            @if($extra->isOnSale())
+                                <span class="mb-1 inline-block bg-black px-1.5 py-0.5 text-[10px] font-bold uppercase text-white">Save</span>
+                            @endif
+                            <a href="{{ route('products.show', $extra) }}" class="block text-sm font-semibold">{{ $extra->name }}</a>
+                            <p class="text-[12px] text-black/50">{{ $extra->category?->name }}</p>
+                            <p class="mt-1 text-sm">
+                                @if($extra->isOnSale())
+                                    <span class="mr-1 text-[#e23b3b]/70 line-through">₹{{ number_format($extra->compare_at_price, 0) }}</span>
+                                    <span class="font-semibold text-[#e23b3b]">₹{{ number_format($extra->effectivePrice(), 0) }}</span>
+                                @else
+                                    <span class="font-semibold">₹{{ number_format($extra->effectivePrice(), 0) }}</span>
+                                @endif
+                            </p>
+                            @if($extra->short_description)
+                                <p class="mt-1 line-clamp-2 text-[12px] text-black/60">{{ $extra->short_description }}</p>
+                            @endif
+                            <div class="mt-2">
+                                @livewire('store.quick-add', ['productId' => $extra->id, 'presentation' => 'plus'], key('upsell-'.$extra->id))
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            <div class="mt-6 border-t border-black/10">
+                @if($product->description)
+                    <details class="group border-b border-black/10 py-4" open>
+                        <summary class="flex cursor-pointer list-none items-center justify-between text-[12px] font-semibold uppercase tracking-[.14em]">
+                            <span>Description</span><span class="text-lg font-normal group-open:hidden">+</span><span class="hidden text-lg font-normal group-open:inline">−</span>
+                        </summary>
+                        <div class="mt-3 text-sm leading-7 text-black/70">{!! nl2br(e($product->description)) !!}</div>
+                    </details>
+                @endif
+                <details class="group border-b border-black/10 py-4">
+                    <summary class="flex cursor-pointer list-none items-center justify-between text-[12px] font-semibold uppercase tracking-[.14em]">
+                        <span class="flex items-center gap-2">Reviews
+                            @if($product->rating_count)
+                                <span class="text-[#1f9d4a]">★★★★★</span>
+                                <span class="font-medium normal-case tracking-normal text-black/50">{{ $product->rating_count }}</span>
+                            @endif
+                        </span>
+                        <span class="text-lg font-normal group-open:hidden">+</span><span class="hidden text-lg font-normal group-open:inline">−</span>
+                    </summary>
+                    <div class="mt-3 space-y-3 text-sm text-black/70">
+                        @forelse($product->reviews->where('is_approved', true) as $review)
+                            <div>
+                                <p class="font-semibold text-black">{{ $review->title ?: $review->user?->name }}</p>
+                                <p>{{ $review->body }}</p>
+                            </div>
+                        @empty
+                            <p>No reviews yet.</p>
+                        @endforelse
+                    </div>
+                </details>
+                <details class="group border-b border-black/10 py-4">
+                    <summary class="flex cursor-pointer list-none items-center justify-between text-[12px] font-semibold uppercase tracking-[.14em]">
+                        <span>Shipping</span><span class="text-lg font-normal group-open:hidden">+</span><span class="hidden text-lg font-normal group-open:inline">−</span>
+                    </summary>
+                    <div class="mt-3 text-sm leading-7 text-black/70">{{ $product->shipping_info ?: 'Delivery across India. Free shipping on orders over ₹'.number_format(config('shop.free_shipping_threshold'), 0).'.' }}</div>
+                </details>
+            </div>
+
+            @if($product->category)
+                <p class="mt-6 bg-[#f6f6f6] px-4 py-5 text-center text-sm">Designed for <span class="font-semibold">{{ $product->category->name }}</span></p>
+            @endif
+        </div>
+
+        @if($related->isNotEmpty())
+            <section class="lg:col-start-1">
+                <h2 class="mb-5 text-center text-[13px] font-semibold uppercase tracking-[.18em]">Recommended for you</h2>
+                <div class="grid grid-cols-2 gap-3">
+                    @foreach($related as $p)
+                        <x-commerce-card :product="$p" />
+                    @endforeach
+                </div>
+            </section>
+        @endif
+    </div>
+
+    <div x-show="zoom" x-cloak @keydown.escape.window="zoom = false" class="fixed inset-0 z-[80] flex items-center justify-center bg-black/90 p-6" @click.self="zoom = false">
+        <button type="button" @click="zoom = false" class="absolute right-6 top-6 text-4xl text-white">×</button>
+        <img src="{{ \App\Support\StoreMedia::url($src ?? null) }}" class="max-h-full max-w-full object-contain" alt="{{ $product->name }}">
+    </div>
 </div>

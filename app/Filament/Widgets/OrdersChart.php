@@ -29,8 +29,8 @@ class OrdersChart extends ChartWidget
                 [
                     'label' => 'Orders',
                     'data' => $data->pluck('count')->toArray(),
-                    'borderColor' => '#18181b',
-                    'backgroundColor' => 'rgba(24, 24, 27, 0.08)',
+                    'borderColor' => '#111111',
+                    'backgroundColor' => 'rgba(238, 255, 153, 0.85)',
                     'fill' => true,
                 ],
             ],

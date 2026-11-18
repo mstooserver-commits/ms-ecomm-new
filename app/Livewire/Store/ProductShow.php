@@ -83,6 +83,7 @@ class ProductShow extends Component
 
         $cart->add($this->product, $variant, $this->quantity);
         $this->dispatch('cart-updated');
+        $this->dispatch('open-cart');
         $this->cartMessage = "{$this->product->name} added to your cart.";
     }
 
@@ -128,9 +129,8 @@ class ProductShow extends Component
     public function render()
     {
         $related = Product::active()
-            ->where('category_id', $this->product->category_id)
             ->where('id', '!=', $this->product->id)
-            ->with('images')
+            ->with(['images', 'variants', 'category'])
             ->limit(4)
             ->get();
 

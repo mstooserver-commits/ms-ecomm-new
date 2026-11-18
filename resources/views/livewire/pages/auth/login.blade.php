@@ -26,7 +26,7 @@ new #[Layout('layouts.guest')] class extends Component
 
 <div>
     <div class="mb-8">
-        <p class="text-[10px] uppercase tracking-[.22em] font-semibold text-[#5f8c52] mb-3">Welcome back</p>
+        <p class="text-[10px] uppercase tracking-[.22em] font-semibold text-black mb-3">Welcome back</p>
         <h1 class="text-4xl leading-tight" style="font-family:'Playfair Display',serif">Sign in to your account</h1>
         <p class="text-sm text-stone-500 mt-3">View your orders, wishlist and account details.</p>
     </div>
@@ -56,14 +56,14 @@ new #[Layout('layouts.guest')] class extends Component
         <!-- Remember Me -->
         <div class="block mt-4">
             <label for="remember" class="inline-flex items-center">
-                <input wire:model="form.remember" id="remember" type="checkbox" class="rounded border-[#17351d]/30 text-[#5f8c52] focus:ring-[#5f8c52]" name="remember">
+                <input wire:model="form.remember" id="remember" type="checkbox" class="rounded border-black/30 text-black focus:ring-black" name="remember">
                 <span class="ms-2 text-sm text-stone-500">{{ __('Remember me') }}</span>
             </label>
         </div>
 
         <div class="flex items-center justify-end mt-4">
             @if (Route::has('password.request'))
-                <a class="text-sm text-stone-500 hover:text-[#17351d] border-b border-stone-300" href="{{ route('password.request') }}" wire:navigate>
+                <a class="text-sm text-stone-500 hover:text-black border-b border-stone-300" href="{{ route('password.request') }}" wire:navigate>
                     {{ __('Forgot your password?') }}
                 </a>
             @endif

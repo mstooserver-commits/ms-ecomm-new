@@ -13,9 +13,7 @@
                     <div class="flex gap-4 border-b border-zinc-200 pb-6" wire:key="cart-{{ $item->id }}">
                         @php
                             $img = $item->product->images->first();
-                            $cartImage = $img?->path
-                                ? (str_starts_with($img->path, 'http') ? $img->path : asset('storage/'.$img->path))
-                                : asset('images/product-placeholder.svg');
+                            $cartImage = \App\Support\StoreMedia::url($img?->path);
                         @endphp
                         <img src="{{ $cartImage }}"
                              class="w-24 h-32 object-cover bg-zinc-100" alt="{{ $item->product->name }}">

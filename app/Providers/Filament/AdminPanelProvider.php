@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -10,8 +11,7 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
-use Filament\Widgets;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -28,17 +28,41 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->brandName(config('shop.name', 'NOIR Collective'))
-            ->brandLogoHeight('2rem')
+            ->brandName('MSF')
             ->colors([
-                'primary' => Color::Zinc,
-                'danger' => Color::Rose,
-                'success' => Color::Emerald,
-                'warning' => Color::Amber,
+                'primary' => [
+                    50 => '#f7f7f7',
+                    100 => '#eeff99',
+                    200 => '#e7e7e7',
+                    300 => '#d0d0d0',
+                    400 => '#8d8d8d',
+                    500 => '#111111',
+                    600 => '#111111',
+                    700 => '#000000',
+                    800 => '#000000',
+                    900 => '#000000',
+                    950 => '#000000',
+                ],
+                'gray' => [
+                    50 => '#fafafa',
+                    100 => '#f4f4f4',
+                    200 => '#e8e8e8',
+                    300 => '#d4d4d4',
+                    400 => '#8a8a8a',
+                    500 => '#5c5c5c',
+                    600 => '#3f3f3f',
+                    700 => '#2a2a2a',
+                    800 => '#171717',
+                    900 => '#111111',
+                    950 => '#0a0a0a',
+                ],
             ])
             ->font('Inter')
             ->darkMode(false)
+            ->defaultThemeMode(ThemeMode::Light)
             ->sidebarCollapsibleOnDesktop()
+            ->renderHook(PanelsRenderHook::STYLES_AFTER, fn (): string => '<link rel="stylesheet" href="'.asset('css/admin-theme.css').'?v='.filemtime(public_path('css/admin-theme.css')).'">')
+            ->renderHook(PanelsRenderHook::BODY_START, fn () => view('filament.hooks.announcement'))
             ->navigationGroups([
                 NavigationGroup::make('Catalog')->icon('heroicon-o-shopping-bag'),
                 NavigationGroup::make('Enquiries')->icon('heroicon-o-chat-bubble-left-right'),

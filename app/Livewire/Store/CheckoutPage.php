@@ -44,6 +44,7 @@ class CheckoutPage extends Component
             'shipping.city' => 'required|string|max:100',
             'shipping.state' => 'required|string|max:100',
             'shipping.postal_code' => 'required|string|max:20',
+            'shipping.phone' => 'required|string|max:20',
             'guestEmail' => Auth::check() ? 'nullable' : 'required|email',
         ]);
 
@@ -73,6 +74,7 @@ class CheckoutPage extends Component
             return;
         }
 
+        session()->flash('success', 'Order '.$order->order_number.' is placed.');
         $this->redirect(route('orders.show', $order), navigate: true);
     }
 

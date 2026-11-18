@@ -16,6 +16,12 @@ class BannerResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-photo';
 
+    protected static ?string $navigationLabel = 'Slider';
+
+    protected static ?string $modelLabel = 'Slide';
+
+    protected static ?string $pluralModelLabel = 'Slider';
+
     protected static ?string $navigationGroup = 'Marketing';
 
     protected static ?int $navigationSort = 1;
@@ -24,22 +30,17 @@ class BannerResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Catalogue slider')->description('Upload homepage slider images and control their order.')->schema([
-                    Forms\Components\TextInput::make('title')->required()->maxLength(255),
+                Forms\Components\Section::make('Homepage slide')->description('Each slide is one photo on the homepage hero. Drag the list to change the order. The first slide is the front image.')->schema([
+                    Forms\Components\Textarea::make('title')->required()->rows(2)->maxLength(255)->helperText('Use a new line for a two-line headline, for example Case / open.'),
                     Forms\Components\TextInput::make('subtitle')->maxLength(255),
                     Forms\Components\FileUpload::make('image')
                         ->image()
                         ->directory('banners')
                         ->disk('public')
                         ->required()
-                        ->helperText('Recommended: 1920×1080, JPG or WebP'),
-                    Forms\Components\FileUpload::make('video')
-                        ->directory('banners/videos')
-                        ->disk('public')
-                        ->acceptedFileTypes(['video/mp4', 'video/webm'])
-                        ->helperText('Optional — overrides image when set'),
-                    Forms\Components\TextInput::make('link')->url()->placeholder('/shop'),
-                    Forms\Components\TextInput::make('button_text')->default('View Catalogue'),
+                        ->helperText('Square or portrait photo. JPG or WebP. This is the slider image.'),
+                    Forms\Components\TextInput::make('link')->placeholder('/shop')->helperText('Where the button goes. /shop is fine.'),
+                    Forms\Components\TextInput::make('button_text')->default('Shop now'),
                 ]),
                 Forms\Components\Section::make('Settings')->columns(3)->schema([
                     Forms\Components\Select::make('placement')
@@ -56,7 +57,9 @@ class BannerResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('image')->disk('public')->height(48),
+                Tables\Columns\ImageColumn::make('image')
+                    ->getStateUsing(fn (Banner $record): string => \App\Support\StoreMedia::url($record->image))
+                    ->height(56),
                 Tables\Columns\TextColumn::make('title')->searchable(),
                 Tables\Columns\TextColumn::make('placement')->badge(),
                 Tables\Columns\IconColumn::make('is_active')->boolean(),

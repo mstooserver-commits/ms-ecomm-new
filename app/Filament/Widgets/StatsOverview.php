@@ -23,7 +23,7 @@ class StatsOverview extends BaseWidget
             Stat::make('Revenue', '₹'.number_format($revenue, 2))
                 ->description('Paid orders')
                 ->descriptionIcon('heroicon-m-banknotes')
-                ->color('success')
+                ->color('primary')
                 ->chart([7, 12, 8, 15, 10, 18, $ordersToday]),
             Stat::make('Orders today', $ordersToday)
                 ->description('New orders')

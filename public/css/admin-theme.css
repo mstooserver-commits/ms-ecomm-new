@@ -1,0 +1,252 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --msf-ink: #111111;
+    --msf-lime: #eeff99;
+    --msf-line: rgba(17, 17, 17, .1);
+    --msf-soft: #f6f6f6;
+}
+
+.fi-body {
+    background: #fff;
+    color: var(--msf-ink);
+    font-family: Inter, sans-serif;
+}
+
+.msf-admin-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    background: #111;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+}
+
+.msf-admin-bar strong {
+    color: var(--msf-lime);
+    font-weight: 600;
+}
+
+.fi-logo {
+    font-family: Inter, sans-serif !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    letter-spacing: .42em;
+    text-transform: uppercase;
+    color: #111 !important;
+}
+
+.fi-sidebar-header a {
+    text-decoration: none;
+}
+
+.fi-sidebar-header a::after {
+    content: "Tech accessories";
+    display: block;
+    margin-top: 4px;
+    margin-left: .42em;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: #6b6b6b;
+}
+
+.fi-sidebar,
+.fi-sidebar-header {
+    background: #fff !important;
+    box-shadow: none !important;
+    --tw-ring-shadow: 0 0 #0000 !important;
+}
+
+.fi-sidebar {
+    top: 36px !important;
+    height: calc(100vh - 36px) !important;
+}
+
+.fi-topbar {
+    top: 36px;
+}
+
+.fi-sidebar {
+    border-inline-end: 1px solid var(--msf-line);
+}
+
+.fi-sidebar-header {
+    border-bottom: 1px solid var(--msf-line);
+}
+
+.fi-sidebar-group-label {
+    color: #111 !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+}
+
+.fi-sidebar-item-button {
+    border-radius: 0 !important;
+}
+
+.fi-sidebar-item-button:hover,
+.fi-sidebar-item-button:focus-visible {
+    background: var(--msf-soft) !important;
+}
+
+.fi-sidebar-item.fi-active > .fi-sidebar-item-button,
+.fi-sidebar-item.fi-sidebar-item-active > .fi-sidebar-item-button {
+    background: #111 !important;
+    color: var(--msf-lime) !important;
+}
+
+.fi-sidebar-item.fi-active .fi-sidebar-item-label,
+.fi-sidebar-item.fi-active .fi-sidebar-item-icon,
+.fi-sidebar-item.fi-sidebar-item-active .fi-sidebar-item-label,
+.fi-sidebar-item.fi-sidebar-item-active .fi-sidebar-item-icon {
+    color: var(--msf-lime) !important;
+}
+
+.fi-topbar nav {
+    background: #fff !important;
+    box-shadow: none !important;
+    border-bottom: 1px solid var(--msf-line);
+    --tw-ring-shadow: 0 0 #0000 !important;
+}
+
+.fi-main {
+    background: #fff;
+}
+
+.fi-header-heading {
+    font-size: 1.7rem !important;
+    font-weight: 700 !important;
+    letter-spacing: -.03em;
+    text-transform: uppercase;
+}
+
+.fi-breadcrumbs-item-label {
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+.fi-section,
+.fi-ta-ctn,
+.fi-wi-stats-overview-stat,
+.fi-wi-chart,
+.fi-fo-component-ctn,
+.fi-dropdown-panel,
+.fi-modal-window,
+.fi-simple-main,
+.fi-in-entry-wrp,
+.fi-no-notification {
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    --tw-ring-color: var(--msf-line) !important;
+}
+
+.fi-section-header-heading,
+.fi-ta-header-heading,
+.fi-wi-stats-overview-stat-label {
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    font-size: 12px !important;
+}
+
+.fi-wi-stats-overview-stat-value {
+    font-weight: 600 !important;
+    letter-spacing: -.03em;
+}
+
+.fi-btn:not(.fi-icon-btn) {
+    border-radius: 0 !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    box-shadow: none !important;
+}
+
+.fi-btn.fi-color-primary {
+    background: #111 !important;
+    color: #fff !important;
+}
+
+.fi-btn.fi-color-primary:hover {
+    background: #000 !important;
+}
+
+.fi-btn.fi-color-gray {
+    background: #fff !important;
+    color: #111 !important;
+    box-shadow: inset 0 0 0 1px #111 !important;
+}
+
+.fi-input-wrp,
+.fi-select-input,
+.fi-fo-tags-input,
+.fi-fo-textarea {
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #fff;
+}
+
+.fi-input-wrp {
+    box-shadow: inset 0 0 0 1px rgba(17, 17, 17, .18) !important;
+}
+
+.fi-input-wrp:focus-within {
+    box-shadow: inset 0 0 0 1px #111 !important;
+}
+
+.fi-badge {
+    border-radius: 0 !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.fi-ta-header-cell {
+    font-size: 11px !important;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.fi-ta-row {
+    border-color: var(--msf-line);
+}
+
+.fi-pagination-item-button,
+.fi-dropdown-list-item {
+    border-radius: 0 !important;
+}
+
+.fi-simple-layout {
+    background: #fff;
+}
+
+.fi-simple-main {
+    max-width: 420px !important;
+    border: 1px solid #111 !important;
+    box-shadow: none !important;
+}
+
+.fi-simple-header-heading {
+    font-weight: 700 !important;
+    letter-spacing: -.03em;
+    text-transform: uppercase;
+}
+
+.fi-global-search-field .fi-input-wrp {
+    border-radius: 999px !important;
+}
+
+::selection {
+    background: var(--msf-lime);
+    color: #111;
+}

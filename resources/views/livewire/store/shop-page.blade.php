@@ -1,12 +1,37 @@
-<div>
-<section class="bg-[#d7cbb8] px-5 py-16 lg:py-24 text-center"><p class="eyebrow text-[#75806a] mb-4">Digital furniture catalogue</p><h1 class="font-display text-5xl lg:text-7xl mb-5">Furniture for living well</h1><p class="max-w-xl mx-auto text-stone-600 leading-7">Browse our designs, explore materials and enquire directly for pricing, availability or custom sizing.</p></section>
-<div class="max-w-[1440px] mx-auto px-5 lg:px-10 py-10 lg:py-16" x-data="{filters:false}">
-<div class="flex items-center justify-between pb-6 mb-8 border-b border-[#252620]/15"><p class="text-sm text-stone-500">{{ $products->total() }} furniture designs</p><div class="flex items-center gap-4"><button @click="filters=!filters" class="lg:hidden eyebrow">Filters</button><select wire:model.live="sort" class="bg-transparent border-0 py-1 pr-8 text-xs uppercase tracking-[.12em] focus:ring-0"><option value="newest">Newest</option><option value="popular">Most viewed</option></select></div></div>
-<div class="flex gap-8 lg:gap-12">
-<aside :class="filters?'block':'hidden'" class="lg:block fixed lg:static inset-0 lg:inset-auto z-[60] bg-[#fbfaf6] lg:bg-transparent p-6 lg:p-0 lg:w-56 shrink-0 overflow-y-auto"><div class="flex lg:hidden justify-between items-center mb-8"><span class="font-display text-3xl">Filters</span><button @click="filters=false" class="text-2xl">×</button></div>
-<div class="mb-8"><label class="eyebrow text-[#75806a] block mb-3">Search</label><input wire:model.live.debounce.400ms="search" type="search" placeholder="What are you looking for?" class="w-full bg-transparent border-0 border-b border-[#252620]/30 px-0 py-3 text-sm focus:ring-0 focus:border-[#252620]"></div>
-<div class="border-b border-[#252620]/15 pb-7 mb-7"><p class="eyebrow text-[#75806a] mb-4">Room</p><div class="space-y-3 text-sm"><button wire:click="$set('category',null)" class="block {{ !$category?'font-semibold':'text-stone-500' }}">All furniture</button>@foreach($categories as $cat)<button wire:click="$set('category','{{ $cat->slug }}')" class="block {{ $category===$cat->slug?'font-semibold':'text-stone-500 hover:text-[#252620]' }}">{{ $cat->name }}</button>@endforeach</div></div>
-<div class="border-b border-[#252620]/15 pb-7 mb-7"><p class="eyebrow text-[#75806a] mb-4">Collection</p><div class="space-y-3 text-sm">@foreach($brands as $b)<button wire:click="$set('brand','{{ $brand===$b->slug?'':$b->slug }}')" class="block {{ $brand===$b->slug?'font-semibold':'text-stone-500 hover:text-[#252620]' }}">{{ $b->name }}</button>@endforeach</div></div>
-<button wire:click="clearFilters" class="eyebrow border-b border-[#252620] pb-1">Clear all</button></aside>
-<div class="flex-1 min-w-0">@if($products->isEmpty())<div class="text-center py-24"><p class="font-display text-3xl mb-4">No pieces found</p><p class="text-stone-500 mb-6">Try a different room or search term.</p><button wire:click="clearFilters" class="btn-dark">Clear filters</button></div>@else<div class="grid grid-cols-2 xl:grid-cols-3 gap-x-4 gap-y-12 lg:gap-x-7 lg:gap-y-16">@foreach($products as $product)<x-product-card :product="$product" />@endforeach</div><div class="mt-16">{{ $products->links() }}</div>@endif</div>
-</div></div></div>
+<div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-10">
+    <div class="mb-6">
+        <h1 class="font-display text-3xl sm:text-5xl">{{ $category ? str_replace('-', ' ', $category) : 'All tech' }}</h1>
+        <p class="mt-3 max-w-2xl text-sm text-black/60 leading-6">{{ $products->total() }} pieces. Phone cases, charging and matching accessories.</p>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2 pb-5 mb-6 border-b border-black/10">
+        <button type="button" wire:click="$set('category', null)" class="px-3 py-2 text-[12px] uppercase tracking-[.08em] border {{ !$category ? 'bg-black text-white border-black' : 'border-black/15' }}">All</button>
+        @foreach($categories as $cat)
+            <button type="button" wire:click="$set('category', '{{ $cat->slug }}')" class="px-3 py-2 text-[12px] uppercase tracking-[.08em] border {{ $category === $cat->slug ? 'bg-black text-white border-black' : 'border-black/15' }}">{{ $cat->name }}</button>
+        @endforeach
+        <div class="ml-auto flex items-center gap-3">
+            <select wire:model.live="sort" class="bg-transparent border border-black/15 py-2 pl-3 pr-8 text-[12px] uppercase tracking-[.08em]">
+                <option value="newest">Newest</option>
+                <option value="popular">Most viewed</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="mb-6">
+        <input wire:model.live.debounce.400ms="search" type="search" placeholder="Search" class="w-full sm:max-w-xs border border-black/15 px-4 py-2.5 text-sm">
+    </div>
+
+    @if($products->isEmpty())
+        <div class="text-center py-24">
+            <p class="font-display text-3xl mb-4">No pieces found</p>
+            <button wire:click="clearFilters" class="btn-dark">Clear filters</button>
+        </div>
+    @else
+        <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-3 gap-y-10">
+            @foreach($products as $product)
+                <x-product-card :product="$product" />
+            @endforeach
+        </div>
+        <div class="mt-12">{{ $products->links() }}</div>
+    @endif
+</div>
