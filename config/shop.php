@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'name' => env('SHOP_NAME', 'MS Furniture'),
-    'tagline' => env('SHOP_TAGLINE', 'Furniture Made for Living'),
+    'name' => env('SHOP_NAME', 'Zorrusso'),
+    'tagline' => env('SHOP_TAGLINE', 'Tech accessories'),
     'currency' => env('SHOP_CURRENCY', 'INR'),
     'currency_symbol' => env('SHOP_CURRENCY_SYMBOL', '₹'),
     'tax_rate' => env('SHOP_TAX_RATE', 18),

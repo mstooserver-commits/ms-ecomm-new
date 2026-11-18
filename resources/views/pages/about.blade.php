@@ -6,23 +6,23 @@
     <div class="relative max-w-[1440px] mx-auto px-6 lg:px-10 py-24 lg:py-36 grid lg:grid-cols-[1.2fr_.8fr] gap-16 items-end">
         <div>
             <p class="eyebrow text-[#eeff99] mb-6">Our story</p>
-            <h1 class="font-display text-5xl sm:text-7xl lg:text-[86px] leading-[.98]">Furniture made<br><em>for living.</em></h1>
+            <h1 class="font-display text-5xl sm:text-7xl lg:text-[86px] leading-[.98]">Tech, dressed<br><em>for every day.</em></h1>
         </div>
-        <p class="text-white/70 leading-8 max-w-lg">From our Mohali workshop, MS Furniture creates luxury and custom furniture for homes, hotels and statement interiors across India. Every piece balances skilled craftsmanship, comfort and lasting materials.</p>
+        <p class="text-white/70 leading-8 max-w-lg">Zorrusso makes phone cases, charging and matching accessories with a precise fit and a finish made to be seen.</p>
     </div>
 </section>
 
 <section class="max-w-[1440px] mx-auto px-6 lg:px-10 py-20 lg:py-28">
     <div class="grid lg:grid-cols-2 gap-14 lg:gap-24 items-center">
         <div class="aspect-[4/3] bg-[#e7eee0] overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1615874694520-474822394e73?w=1400&q=85" alt="Crafted furniture in a calm interior" class="w-full h-full object-cover">
+            <img src="{{ asset('images/tech/hero-tech.jpg') }}" alt="Zorrusso accessories" class="w-full h-full object-cover">
         </div>
         <div class="max-w-xl">
-            <p class="eyebrow text-[#111] mb-4">The MS approach</p>
+            <p class="eyebrow text-[#111] mb-4">The Zorrusso approach</p>
             <h2 class="font-display text-4xl lg:text-6xl leading-tight mb-7">Good design should feel effortless.</h2>
             <div class="space-y-5 text-stone-600 leading-7">
-                <p>We choose pieces that balance beauty with everyday usefulness—generous seating, thoughtful storage and finishes that settle naturally into your home.</p>
-                <p>Our collection is shaped by lasting quality rather than passing trends, so every piece can become part of your home’s story.</p>
+                <p>Cases, power and small accessories that fit the device you already carry, with finishes you actually want people to see.</p>
+                <p>The collection stays focused: precise fit, honest materials, and pieces that work together.</p>
             </div>
             <a href="{{ route('shop') }}" class="btn-dark mt-9">Explore our collection <span>→</span></a>
         </div>
@@ -33,9 +33,9 @@
     <div class="max-w-[1440px] mx-auto px-6 lg:px-10">
         <div class="grid md:grid-cols-3 gap-px bg-[#111]/10">
             @foreach([
-                ['01', 'Comfort first', 'Pieces selected to feel as good as they look, every single day.'],
-                ['02', 'Made to last', 'Honest materials and enduring construction for years of living.'],
-                ['03', 'Here to help', 'Friendly advice to help you find the right piece for your space.'],
+                ['01', 'Precise fit', 'Cases and accessories shaped for the device in your hand.'],
+                ['02', 'Made to last', 'Finishes and materials chosen to stay looking sharp.'],
+                ['03', 'Here to help', 'A note away if you need a size, an order, or a match.'],
             ] as [$number, $title, $copy])
                 <article class="bg-[#f6f6f6] p-8 lg:p-12">
                     <span class="eyebrow text-[#111]">{{ $number }}</span>

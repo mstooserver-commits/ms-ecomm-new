@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? config('shop.name') }} — {{ config('shop.tagline') }}</title>
-    <meta name="description" content="Premium furniture for modern Indian homes.">
+    <meta name="description" content="Zorrusso phone cases, charging and accessories.">
+    <link rel="icon" href="{{ asset('images/brand/favicon.png') }}">
     <link rel="canonical" href="{{ url()->current() }}">
     <meta property="og:title" content="{{ $title ?? config('shop.name') }}">
-    <meta property="og:description" content="Premium furniture for modern Indian homes.">
+    <meta property="og:description" content="Zorrusso phone cases, charging and accessories.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
@@ -46,7 +47,7 @@
             <div class="absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l from-[#111] to-transparent"></div>
             <div class="flex h-full items-center whitespace-nowrap animate-[marquee_28s_linear_infinite]">
                 @foreach(range(1, 2) as $copy)
-                    <span class="mx-8 text-[11px] uppercase tracking-[.14em]"><strong class="text-[#eeff99] font-semibold">{{ $storeSettings['announcement'] }}</strong></span>
+                    <span class="mx-8 text-[11px] uppercase tracking-[.14em]"><strong class="text-[#84FC10] font-semibold">{{ $storeSettings['announcement'] }}</strong></span>
                     <span class="text-white/40">•</span>
                     <span class="mx-8 text-[11px] uppercase tracking-[.14em]">Free delivery on orders over ₹{{ number_format(config('shop.free_shipping_threshold'), 0) }}</span>
                     <span class="text-white/40">•</span>
@@ -67,7 +68,9 @@
                     <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>
                 </button>
             </div>
-            <a href="{{ route('home') }}" class="text-[15px] sm:text-[18px] font-semibold tracking-[0.42em] uppercase" aria-label="MS Furniture home">MSF</a>
+            <a href="{{ route('home') }}" class="block" aria-label="Zorrusso home">
+                <img src="{{ asset('images/brand/zorrusso-logo.png') }}" alt="Zorrusso" class="h-8 w-auto sm:h-9">
+            </a>
             <div class="flex items-center justify-end gap-3 sm:gap-4">
                 <span class="hidden md:inline text-[11px] font-semibold tracking-[.14em]">INR</span>
                 @auth
@@ -177,7 +180,7 @@
             </div>
         </div>
         <div class="border-t border-black/10 px-6 py-5 flex flex-col sm:flex-row justify-between gap-3 text-[11px] uppercase tracking-[.12em] text-black/50">
-            <span>© {{ date('Y') }} MS Furniture</span>
+            <span>© {{ date('Y') }} {{ config('shop.name') }}</span>
             <span>Tech accessories</span>
         </div>
     </footer>

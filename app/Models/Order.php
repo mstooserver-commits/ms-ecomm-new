@@ -58,6 +58,6 @@ class Order extends Model
 
     public static function generateOrderNumber(): string
     {
-        return 'NC-'.strtoupper(uniqid());
+        return 'ZR-'.strtoupper(uniqid());
     }
 }

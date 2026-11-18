@@ -4,9 +4,9 @@
 <section class="bg-[#f6f6f6]">
     <div class="max-w-[1440px] mx-auto px-6 lg:px-10 py-20 lg:py-28 grid lg:grid-cols-2 gap-14 lg:gap-24">
         <div>
-            <p class="eyebrow text-[#111] mb-5">Contact MS Furniture</p>
-            <h1 class="font-display text-5xl lg:text-7xl leading-tight mb-7">Let’s find the right piece.</h1>
-            <p class="text-stone-600 leading-7 max-w-lg">Need product details, pricing, availability or design advice? Send an enquiry and our furniture consultant will contact you.</p>
+            <p class="eyebrow text-[#111] mb-5">Contact Zorrusso</p>
+            <h1 class="font-display text-5xl lg:text-7xl leading-tight mb-7">Let’s find the right case.</h1>
+            <p class="text-stone-600 leading-7 max-w-lg">Need a product, a size, or an order update? Send a note and we’ll get back to you.</p>
         </div>
         <div class="bg-white p-7 sm:p-10 shadow-[0_20px_60px_rgba(23,53,29,.08)]">
             <form action="{{ route('inquiries.store') }}" method="post" class="space-y-6">

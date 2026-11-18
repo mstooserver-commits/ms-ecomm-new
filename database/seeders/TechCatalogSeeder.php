@@ -17,7 +17,7 @@ class TechCatalogSeeder extends Seeder
     {
         $brand = Brand::updateOrCreate(
             ['slug' => 'msf-tech'],
-            ['name' => 'MSF', 'is_active' => true]
+            ['name' => 'Zorrusso', 'is_active' => true]
         );
 
         $categories = [

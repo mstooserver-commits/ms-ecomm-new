@@ -28,7 +28,10 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->brandName('MSF')
+            ->brandName('Zorrusso')
+            ->brandLogo(asset('images/brand/zorrusso-logo.png'))
+            ->brandLogoHeight('1.75rem')
+            ->favicon(asset('images/brand/favicon.png'))
             ->colors([
                 'primary' => [
                     50 => '#f7f7f7',

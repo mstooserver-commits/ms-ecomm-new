@@ -2,7 +2,7 @@
 
 :root {
     --msf-ink: #111111;
-    --msf-lime: #eeff99;
+    --msf-lime: #84FC10;
     --msf-line: rgba(17, 17, 17, .1);
     --msf-soft: #f6f6f6;
 }
@@ -32,12 +32,10 @@
 }
 
 .fi-logo {
-    font-family: Inter, sans-serif !important;
-    font-size: 15px !important;
-    font-weight: 600 !important;
-    letter-spacing: .42em;
-    text-transform: uppercase;
-    color: #111 !important;
+    height: 1.75rem !important;
+    width: auto !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
 }
 
 .fi-sidebar-header a {
@@ -45,15 +43,7 @@
 }
 
 .fi-sidebar-header a::after {
-    content: "Tech accessories";
-    display: block;
-    margin-top: 4px;
-    margin-left: .42em;
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: .16em;
-    text-transform: uppercase;
-    color: #6b6b6b;
+    content: none;
 }
 
 .fi-sidebar,
