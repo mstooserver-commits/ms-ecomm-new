@@ -38,7 +38,7 @@
     $featuredCategories = $categories->isNotEmpty() ? $categories : collect();
 @endphp
 
-<section class="mx-auto mt-5 max-w-[1200px] overflow-hidden px-3 sm:mt-8 sm:px-5"
+<section class="relative w-full overflow-hidden"
     x-data="{ active: 0, total: {{ $heroSlides->count() }} }"
     @if($heroSlides->count() > 1) x-init="setInterval(() => active = (active + 1) % total, 5500)" @endif>
     @foreach($heroSlides as $index => $slide)
@@ -47,34 +47,40 @@
             $second = $count > 1 ? $heroSlides[($index + 1) % $count]['image'] : null;
             $third = $count > 2 ? $heroSlides[($index + 2) % $count]['image'] : null;
         @endphp
-        <div x-show="active === {{ $index }}" @if($index > 0) x-cloak @endif class="relative aspect-[16/8] min-h-[280px] overflow-hidden rounded-[4px] bg-[#27201d] sm:aspect-[16/6]">
+        <div x-show="active === {{ $index }}" @if($index > 0) x-cloak @endif class="relative min-h-[500px] overflow-hidden bg-[#27201d] sm:min-h-[620px] lg:min-h-[690px]">
             <img src="{{ $slide['image'] }}" alt="{{ $slide['title'] }}" class="absolute inset-0 h-full w-full object-cover">
-            <span class="absolute inset-0 bg-gradient-to-r from-black/20 via-black/5 to-black/55"></span>
-            <div class="absolute inset-y-0 right-0 flex w-full flex-col items-center justify-center px-7 text-center text-white sm:w-[52%]">
-                <p class="text-[10px] font-semibold uppercase tracking-[.28em] sm:text-xs">Zorrusso presents</p>
-                <h1 class="mt-3 max-w-lg text-3xl font-semibold uppercase leading-[.95] tracking-[.05em] sm:text-5xl">{!! nl2br(e($slide['title'])) !!}</h1>
-                @if($slide['subtitle'])<p class="mt-3 max-w-md text-sm text-white/85 sm:text-base">{{ $slide['subtitle'] }}</p>@endif
-                <a href="{{ $slide['link'] }}" class="mt-5 inline-flex bg-white px-6 py-3 text-[11px] font-bold uppercase tracking-[.1em] text-black">{{ $slide['button'] }}</a>
+            <span class="absolute inset-0 bg-gradient-to-r from-black/55 via-black/15 to-transparent"></span>
+            <div class="absolute inset-0 mx-auto flex w-full max-w-[1240px] flex-col items-start justify-center px-7 text-left text-white sm:px-12 lg:px-16">
+                <p class="text-[11px] font-semibold uppercase tracking-[.28em] sm:text-xs">The Zorrusso edit</p>
+                <h1 class="mt-4 max-w-[620px] text-4xl font-semibold uppercase leading-[.92] tracking-[-.03em] sm:text-6xl lg:text-7xl">{!! nl2br(e($slide['title'])) !!}</h1>
+                @if($slide['subtitle'])<p class="mt-5 max-w-lg text-base leading-7 text-white/90 sm:text-lg">{{ $slide['subtitle'] }}</p>@endif
+                <a href="{{ $slide['link'] }}" class="mt-7 inline-flex rounded-sm bg-white px-8 py-4 text-sm font-bold uppercase tracking-[.08em] text-black hover:bg-[#eaff78]">{{ $slide['button'] }}</a>
             </div>
         </div>
     @endforeach
     @if($heroSlides->count() > 1)
-        <div class="relative z-10 -mt-5 mb-3 flex justify-center gap-2">
+        <div class="absolute inset-x-0 bottom-6 z-10 flex justify-center gap-2">
             @foreach($heroSlides as $index => $slide)
-                <button type="button" @click="active = {{ $index }}" class="h-1.5 rounded-full bg-[#2a241c] transition-all" :class="active === {{ $index }} ? 'w-6' : 'w-1.5 opacity-40'" aria-label="Slide {{ $index + 1 }}"></button>
+                <button type="button" @click="active = {{ $index }}" class="h-0.5 bg-white transition-all" :class="active === {{ $index }} ? 'w-10' : 'w-7 opacity-45'" aria-label="Slide {{ $index + 1 }}"></button>
             @endforeach
         </div>
     @endif
 </section>
 
-<div class="mt-5 border-y border-black/5 bg-[#f7f7f7]">
-    <div class="mx-auto flex max-w-[1200px] gap-1 overflow-x-auto hide-scrollbar px-3 py-2.5 sm:px-5">
+<div class="bg-[#111] px-4 py-4 text-center text-[11px] text-white sm:text-[12px]">
+    <span class="font-semibold text-[#eaff78]">New season offer: save up to 35%</span>
+    <span class="mx-3 text-white/40">|</span>
+    <span>Free delivery on qualifying orders</span>
+</div>
+
+<div class="border-b border-black/5 bg-[#f7f7f7]">
+    <div class="mx-auto flex max-w-[1240px] gap-4 overflow-x-auto hide-scrollbar px-4 py-4 sm:px-6">
         @foreach($bubbles as [$name, $category, $image])
-            <a href="{{ route('shop', ['category' => $category]) }}" class="w-[88px] shrink-0 text-center sm:w-[100px]">
-                <span class="mx-auto mb-1.5 grid h-10 w-10 place-items-center overflow-hidden rounded-full bg-white sm:h-11 sm:w-11">
-                    <img src="{{ $image }}" alt="{{ $name }}" class="h-full w-full object-cover" loading="lazy">
+            <a href="{{ route('shop', ['category' => $category]) }}" class="w-[94px] shrink-0 text-center sm:w-[108px]">
+                <span class="mx-auto mb-2 grid h-14 w-14 place-items-center overflow-hidden rounded-full bg-white sm:h-16 sm:w-16">
+                    <img src="{{ $image }}" alt="{{ $name }}" class="h-full w-full object-cover transition duration-300 hover:scale-105" loading="lazy">
                 </span>
-                <span class="block text-[9px] font-semibold uppercase leading-3 tracking-[-.01em]">{{ $name }}</span>
+                <span class="block text-[10px] font-semibold uppercase leading-3 tracking-[-.01em]">{{ $name }}</span>
             </a>
         @endforeach
     </div>
@@ -120,12 +126,12 @@
     </ul>
 </section>
 
-<section class="bg-[#f3f3f3] px-4 py-14">
+{{-- <section class="bg-[#f3f3f3] px-4 py-14">
     <div class="mx-auto max-w-3xl text-center">
         <p class="mb-4 text-[13px] font-semibold uppercase tracking-[.18em]">Want first look at the next drop?</p>
         @livewire('store.newsletter-signup', ['tone' => 'green'])
     </div>
-</section>
+</section> --}}
 
 @if($featuredCategories->isNotEmpty())
 <section class="mx-auto max-w-[1200px] px-5 py-14 lg:px-8">

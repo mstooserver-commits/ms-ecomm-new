@@ -33,6 +33,8 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { scrollbar-width: none; }
         @keyframes marquee { to { transform: translateX(-50%); } }
+        .promo-marquee { animation: marquee 24s linear infinite; }
+        @media (prefers-reduced-motion: reduce) { .promo-marquee { animation: none; } }
         a, button { transition: color .2s, background-color .2s, border-color .2s, opacity .2s; }
         :focus-visible { outline: 2px solid #111; outline-offset: 3px; }
         ::selection { background: var(--lime); color: #111; }
@@ -40,7 +42,9 @@
         h1, h2, h3, p, a { overflow-wrap: break-word; }
     </style>
 </head>
-<body class="antialiased" x-data="{ mobileMenu: false, searchOpen: false, drops: false, locale: false, menu: null }">
+<body class="antialiased" x-data="{ mobileMenu: false, searchOpen: false, drops: false, locale: false, menu: null, menuMode: 'shop', newsletterOpen: false }"
+      x-init="if (!sessionStorage.getItem('zorrusso-offer-seen')) setTimeout(() => newsletterOpen = true, 3500)"
+      :class="(mobileMenu || drops || newsletterOpen) ? 'overflow-hidden' : ''">
     @php
         $announcements = [
             $storeSettings['announcement'],
@@ -48,16 +52,22 @@
             'Phone cases, charging and accessories',
         ];
     @endphp
-    <div class="bg-[#111] text-[#84FC10]" x-data="{ i: 0, notes: @js($announcements) }" x-init="setInterval(() => i = (i + 1) % notes.length, 4500)">
-        <div class="grid h-9 grid-cols-[40px_minmax(0,1fr)_40px] items-center">
-            <button type="button" class="text-lg" @click="i = (i + notes.length - 1) % notes.length" aria-label="Previous announcement">‹</button>
-            <p class="truncate px-2 text-center text-[11px] font-semibold uppercase tracking-[.12em]" x-text="notes[i]"></p>
-            <button type="button" class="text-lg" @click="i = (i + 1) % notes.length" aria-label="Next announcement">›</button>
+    <div class="bg-[#111] text-white" x-data="{ i: 0, notes: @js($announcements) }" x-init="setInterval(() => i = (i + 1) % notes.length, 4500)">
+        <div class="mx-auto grid h-10 max-w-[1240px] grid-cols-[36px_minmax(0,1fr)_36px] items-center sm:h-11">
+            <button type="button" class="text-lg lg:invisible" @click="i = (i + notes.length - 1) % notes.length" aria-label="Previous announcement">‹</button>
+            <div class="flex items-center justify-center gap-4 overflow-hidden text-center text-[11px] sm:text-[12px]">
+                <p class="truncate font-semibold text-[#e9ff79]" x-text="notes[i]"></p>
+                <span class="hidden text-white/60 lg:inline">|</span>
+                <span class="hidden lg:inline">Free standard shipping on orders over ₹1,500</span>
+                <span class="hidden text-white/60 xl:inline">|</span>
+                <span class="hidden xl:inline">Zorrusso special: Buy 2 cases—save 20%</span>
+            </div>
+            <button type="button" class="text-lg lg:invisible" @click="i = (i + 1) % notes.length" aria-label="Next announcement">›</button>
         </div>
     </div>
 
-    <header class="sticky top-0 z-50 bg-white">
-        <div class="mx-auto grid h-[58px] max-w-[1200px] grid-cols-[1fr_auto_1fr] items-center px-4 sm:px-5">
+    <header class="sticky top-0 z-50 border-b border-black/5 bg-white">
+        <div class="mx-auto grid h-[76px] max-w-[1240px] grid-cols-[1fr_auto_1fr] items-center px-4 sm:h-[92px] sm:px-7">
             <div class="flex items-center gap-4 sm:gap-5">
                 <button type="button" @click="mobileMenu = true" aria-label="Open Menu" class="p-1">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
@@ -65,30 +75,29 @@
                 <button type="button" @click="searchOpen = !searchOpen" aria-label="Search" class="p-1">
                     <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>
                 </button>
-                <div class="hidden items-center gap-5 md:flex">
-                    <a href="{{ route('shop', ['edit' => 'women']) }}" class="border-b border-black pb-1 text-[10px] font-bold uppercase">Women</a>
-                    <a href="{{ route('shop', ['edit' => 'men']) }}" class="pb-1 text-[10px] font-bold uppercase">Men</a>
+                <div class="hidden items-center gap-7 md:flex">
+                    <a href="{{ route('shop', ['edit' => 'women']) }}" class="border-b-2 border-black px-2 pb-3 text-sm font-bold uppercase">Women</a>
+                    <a href="{{ route('shop', ['edit' => 'men']) }}" class="px-2 pb-3 text-sm font-bold uppercase">Men</a>
                 </div>
             </div>
             <a href="{{ route('home') }}" class="block" aria-label="Zorrusso home">
-                <img src="{{ asset('images/brand/zorrusso-logo.png') }}" alt="Zorrusso" class="h-6 w-auto sm:h-7">
+                <img src="{{ asset('images/brand/zorrusso-logo.png') }}" alt="Zorrusso" class="h-6 w-auto sm:h-8">
             </a>
             <div class="relative flex items-center justify-end gap-3 sm:gap-4">
-                <button type="button" @click="locale = !locale" class="hidden text-[11px] font-semibold tracking-[.14em] md:inline" aria-label="Shipping and currency">IN · INR</button>
+                <button type="button" @click="locale = !locale" class="hidden rounded-lg border border-black/15 px-4 py-3 text-[12px] font-medium md:inline" aria-label="Shipping and currency">🌍&nbsp; INR&nbsp; ⌄</button>
                 <div x-show="locale" x-cloak @click.outside="locale = false" class="absolute right-0 top-12 z-50 w-64 border border-black bg-white p-4 text-left text-[13px] text-black">
                     <p class="text-[11px] font-semibold uppercase tracking-[.14em]">Ships to</p>
                     <p class="mt-2">India</p>
                     <p class="mt-3 text-[11px] font-semibold uppercase tracking-[.14em]">Currency</p>
                     <p class="mt-2">INR ₹</p>
                 </div>
-                <button type="button" @click="drops = !drops" aria-label="News" class="p-1">
+                <a href="{{ route('shop') }}" class="hidden min-w-[190px] items-center justify-between rounded-lg border border-black/15 px-4 py-3 text-[12px] lg:flex">
+                    <span>Shop all devices</span><span aria-hidden="true">⌄</span>
+                </a>
+                <button type="button" @click="drops = true" aria-label="Open notifications" class="relative p-1">
                     <svg class="h-[22px] w-[22px]" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M6 16V10a6 6 0 1 1 12 0v6l1.2 2H4.8L6 16Z"/><path d="M10 19a2 2 0 0 0 4 0"/></svg>
+                    <span class="absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-[#149447] px-1 text-[9px] font-bold text-white">3</span>
                 </button>
-                <div x-show="drops" x-cloak @click.outside="drops = false" class="absolute right-0 top-12 z-50 w-72 border border-black bg-white p-4 text-left text-[13px] text-black shadow-sm">
-                    <p class="text-[11px] font-semibold uppercase tracking-[.14em]">New drop</p>
-                    <p class="mt-2 leading-5">{{ $storeSettings['announcement'] }}</p>
-                    <a href="{{ route('shop', ['sort' => 'newest']) }}" class="mt-3 inline-block border-b border-black text-[11px] font-semibold uppercase tracking-[.12em]">Shop new arrivals</a>
-                </div>
                 @auth
                     <a href="{{ route('account') }}" aria-label="Account" class="hidden sm:inline-flex">
                 @else
@@ -115,7 +124,7 @@
                 <button class="eyebrow shrink-0">Search</button>
             </form>
         </div>
-        @if($navCategories->isNotEmpty())
+        @if($navCategories->isNotEmpty() && !request()->routeIs('home'))
             <nav class="relative border-t border-black/5 bg-[#f7f7f7]" aria-label="Collections" @mouseleave="menu = null">
                 <div class="hide-scrollbar overflow-x-auto">
                     <ul class="mx-auto flex w-max min-w-full max-w-[1200px] items-end justify-center gap-4 px-4">
@@ -148,35 +157,98 @@
         @endif
     </header>
 
-    <div x-show="mobileMenu" x-cloak class="fixed inset-0 z-[70]" @keydown.escape.window="mobileMenu = false">
-        <div class="absolute inset-0 bg-black/40" @click="mobileMenu = false"></div>
-        <aside class="absolute inset-y-0 left-0 w-[min(100%,420px)] bg-white overflow-y-auto" x-transition:enter="transition transform duration-300" x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0">
-            <div class="sticky top-0 bg-[#f6f6f6] px-5 py-4 flex items-center justify-between">
-                <span class="text-sm font-medium">Shop tech</span>
-                <button type="button" @click="mobileMenu = false" aria-label="Close" class="text-2xl leading-none">×</button>
+    @if(request()->routeIs('home'))
+        <div class="overflow-hidden bg-[#eaff78] py-2.5 text-[#4a1022]" aria-label="Current offers">
+            <div class="promo-marquee flex w-max whitespace-nowrap text-[12px] font-semibold uppercase sm:text-sm">
+                @for($i = 0; $i < 2; $i++)
+                    <div class="flex items-center" aria-hidden="{{ $i ? 'true' : 'false' }}">
+                        @foreach(['Buy 2 phone cases, save 20%', 'New season accessories', 'Free delivery over ₹1,500', 'Fresh tech, made personal'] as $offer)
+                            <span class="px-7">{{ $offer }}</span><span aria-hidden="true">•</span>
+                        @endforeach
+                    </div>
+                @endfor
             </div>
-            <div class="px-6 pt-6 pb-10">
-                <div class="mb-6 flex gap-6 text-[13px] font-semibold uppercase tracking-[.08em]">
-                    <a href="{{ route('shop', ['edit' => 'women']) }}">Women</a>
-                    <a href="{{ route('shop', ['edit' => 'men']) }}">Men</a>
-                    <a href="{{ route('shop', ['sale' => 1]) }}">Clearance</a>
+        </div>
+    @endif
+
+    <div x-show="mobileMenu" x-cloak class="fixed inset-0 z-[70]" @keydown.escape.window="mobileMenu = false">
+        <div class="absolute inset-0 bg-black/45" @click="mobileMenu = false"></div>
+        <aside class="absolute inset-y-0 left-0 w-[min(100%,520px)] overflow-y-auto bg-white" x-transition:enter="transition transform duration-300" x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0">
+            <div class="sticky top-0 z-10 border-b border-black/10 bg-[#f6f6f6] p-5">
+                <div class="flex items-center gap-4">
+                    <a href="{{ route('shop') }}" class="flex-1 rounded-lg border border-black/15 bg-white px-4 py-3 text-sm">Shop all devices</a>
+                    <button type="button" @click="mobileMenu = false" aria-label="Close menu" class="grid h-10 w-10 place-items-center text-3xl font-light">×</button>
                 </div>
-                <p class="text-[11px] font-semibold tracking-[.16em] mb-4">COLLECTIONS</p>
-                <div class="grid grid-cols-2 gap-x-4 gap-y-3 mb-8">
-                    @foreach($navCategories as $category)
-                        <a href="{{ route('shop', ['category' => $category->slug]) }}" class="text-[13px] uppercase tracking-[.04em] hover:underline">{{ $category->name }}</a>
+                <div class="mt-5 grid grid-cols-2 text-center text-sm font-bold uppercase">
+                    <button type="button" @click="menuMode = 'shop'" class="border-b-2 py-3" :class="menuMode === 'shop' ? 'border-black' : 'border-transparent'">Shop</button>
+                    <button type="button" @click="menuMode = 'info'" class="border-b-2 py-3" :class="menuMode === 'info' ? 'border-black' : 'border-transparent'">Explore</button>
+                </div>
+            </div>
+            <div x-show="menuMode === 'shop'" class="px-5 py-7">
+                <div class="mb-7 flex items-center justify-between">
+                    <p class="text-sm font-semibold uppercase">Collections</p>
+                    <a href="{{ route('shop') }}" class="text-xs font-semibold uppercase underline underline-offset-4">View all</a>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    @foreach($navCategories->take(4) as $category)
+                        <a href="{{ route('shop', ['category' => $category->slug]) }}" class="group">
+                            <span class="block aspect-square overflow-hidden rounded-md bg-[#f4f4f4]"><img src="{{ \App\Support\StoreMedia::url($category->image) }}" alt="" class="h-full w-full object-cover transition duration-300 group-hover:scale-105"></span>
+                            <span class="mt-2 block text-center text-sm font-medium">{{ $category->name }}</span>
+                        </a>
                     @endforeach
                 </div>
-                <div class="border-t border-black/10 pt-6 space-y-3 text-[13px] uppercase tracking-[.08em]">
-                    <a class="block" href="{{ route('shop') }}">All products</a>
-                    <a class="block" href="{{ route('shop', ['sort' => 'newest']) }}">New arrivals</a>
-                    <a class="block" href="{{ route('about') }}">About us</a>
-                    <a class="block" href="{{ route('faq') }}">Shipping and delivery</a>
-                    <a class="block" href="{{ route('contact') }}">Contact</a>
-                    <a class="block" href="{{ route('blog.index') }}">Journal</a>
+                <div class="mt-8 divide-y divide-black/10 border-y border-black/10">
+                    @foreach($navCategories as $category)
+                        <a href="{{ route('shop', ['category' => $category->slug]) }}" class="flex items-center gap-4 py-4">
+                            <img src="{{ \App\Support\StoreMedia::url($category->image) }}" alt="" class="h-14 w-14 rounded-full bg-[#f4f4f4] object-cover">
+                            <span class="flex-1 text-sm font-semibold uppercase">{{ $category->name }}</span>
+                            <span class="rounded bg-black px-2 py-1 text-[10px] font-semibold text-[#eaff78]">UP TO 35% OFF</span>
+                            <span aria-hidden="true">›</span>
+                        </a>
+                    @endforeach
+                    <a href="{{ route('shop', ['sale' => 1]) }}" class="flex items-center gap-4 py-4 font-semibold uppercase"><span class="grid h-14 w-14 place-items-center rounded-full bg-[#eaff78] text-[10px]">SALE</span><span class="flex-1 text-sm">Clearance</span><span aria-hidden="true">›</span></a>
                 </div>
             </div>
+            <nav x-show="menuMode === 'info'" class="divide-y divide-black/10 px-5 py-5 text-[15px]" aria-label="Information">
+                <a class="block py-5" href="{{ route('account') }}">Track order</a>
+                <a class="block py-5" href="{{ route('about') }}">About us</a>
+                <a class="block py-5" href="{{ route('faq') }}">Help center</a>
+                <a class="block py-5" href="{{ route('contact') }}">Contact us</a>
+                <a class="block py-5" href="{{ route('blog.index') }}">Blog & inspiration</a>
+                <a class="block py-5" href="{{ route('faq') }}">Shipping, delivery & returns</a>
+                <a class="block py-5" href="{{ route('about') }}">Careers & partnerships</a>
+            </nav>
         </aside>
+    </div>
+
+    <div x-show="drops" x-cloak class="fixed inset-0 z-[75]" @keydown.escape.window="drops = false">
+        <div class="absolute inset-0 bg-black/45" @click="drops = false"></div>
+        <aside class="absolute inset-y-0 right-0 w-[min(100%,560px)] overflow-y-auto bg-white p-6 sm:p-9" x-transition:enter="transition transform duration-300" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0">
+            <div class="mb-8 flex items-center justify-between"><h2 class="text-2xl font-semibold">Notifications</h2><button type="button" @click="drops = false" class="text-3xl font-light" aria-label="Close notifications">×</button></div>
+            @foreach([
+                ['The Zorrusso sale is a big deal', 'Save on phone cases, charging, bundles and everyday accessories.', asset('images/tech/phone-case.jpg')],
+                ['New collection: everyday tech', 'Fresh finishes and new shapes are available now.', asset('images/tech/night-glass-phone-case.jpg')],
+                ['New in: charging essentials', 'Portable power and cables designed to travel well.', asset('images/tech/power-bank.jpg')],
+                ['Gifts, sorted', 'Find useful gifts for everyone on your list.', asset('images/tech/earbuds-case.jpg')],
+            ] as [$heading, $copy, $image])
+                <a href="{{ route('shop', ['sort' => 'newest']) }}" class="grid grid-cols-[88px_1fr] gap-5 border-b border-black/15 py-6">
+                    <img src="{{ $image }}" alt="" class="h-[88px] w-[88px] rounded-md object-cover">
+                    <span><strong class="block text-sm uppercase">{{ $heading }}</strong><span class="mt-2 block text-sm leading-6 text-black/55">{{ $copy }}</span><span class="mt-2 block text-xs">Recently</span></span>
+                </a>
+            @endforeach
+        </aside>
+    </div>
+
+    <div x-show="newsletterOpen" x-cloak class="fixed inset-0 z-[80] grid place-items-center p-4" @keydown.escape.window="newsletterOpen = false; sessionStorage.setItem('zorrusso-offer-seen','1')">
+        <div class="absolute inset-0 bg-black/55" @click="newsletterOpen = false; sessionStorage.setItem('zorrusso-offer-seen','1')"></div>
+        <section class="relative w-full max-w-[500px] overflow-hidden rounded-[28px] bg-[#321016] p-8 text-center text-white shadow-2xl sm:p-12" role="dialog" aria-modal="true" aria-labelledby="offer-title">
+            <button type="button" @click="newsletterOpen = false; sessionStorage.setItem('zorrusso-offer-seen','1')" class="absolute right-5 top-4 text-3xl text-white/70" aria-label="Close offer">×</button>
+            <span class="inline-block -rotate-6 rounded-lg bg-[#eaff78] px-5 py-3 text-lg font-black uppercase text-[#6e1530]">Up to 35% off</span>
+            <h2 id="offer-title" class="mt-7 text-4xl font-black uppercase leading-none text-[#f03f77] sm:text-5xl">Welcome offer</h2>
+            <p class="mx-auto mt-4 max-w-sm text-sm leading-6 text-white/75">Join the Zorrusso list for new drops, private offers and a discount on your first order.</p>
+            <div class="mx-auto mt-7 max-w-sm">@livewire('store.newsletter-signup')</div>
+            <p class="mt-5 text-[11px] leading-5 text-white/40">By entering your email address, you agree to receive occasional promotional emails. You can unsubscribe at any time.</p>
+        </section>
     </div>
 
     <main class="min-h-screen">
