@@ -1,13 +1,27 @@
 <div>
     <div x-show="$wire.open" x-cloak class="fixed inset-0 z-[80]" @keydown.escape.window="$wire.close()">
         <div class="absolute inset-0 bg-black/40" @click="$wire.close()"></div>
-        <aside class="absolute inset-y-0 right-0 w-[min(100%,420px)] bg-white flex flex-col shadow-xl">
-            <div class="h-[72px] px-5 flex items-center justify-between border-b border-black/10">
+        <aside class="absolute inset-y-0 right-0 flex w-[min(100%,420px)] flex-col bg-white shadow-xl">
+            <div class="flex h-[58px] items-center justify-between border-b border-black/10 px-5">
                 <p class="text-[12px] font-semibold uppercase tracking-[.16em]">Your cart</p>
                 <button type="button" wire:click="close" class="text-2xl leading-none" aria-label="Close cart">×</button>
             </div>
 
             <div class="flex-1 overflow-y-auto px-5 py-5">
+                @if($cart->items->isNotEmpty())
+                    <div class="mb-5">
+                        <p class="text-[12px]">
+                            @if($remaining > 0)
+                                Add ₹{{ number_format($remaining, 0) }} more for free shipping.
+                            @else
+                                Free shipping is unlocked.
+                            @endif
+                        </p>
+                        <div class="mt-2 h-1 bg-black/10">
+                            <div class="h-full bg-black" style="width: {{ $progress }}%"></div>
+                        </div>
+                    </div>
+                @endif
                 @if($cart->items->isEmpty())
                     <p class="text-sm text-black/60">Your cart is empty.</p>
                     <a href="{{ route('shop') }}" wire:navigate class="btn-dark mt-6">Shop now</a>
@@ -36,11 +50,28 @@
                             </div>
                         @endforeach
                     </div>
+                    @if($suggestion)
+                        <div class="mt-8 border-t border-black/10 pt-5">
+                            <p class="text-[11px] font-semibold uppercase tracking-[.14em]">Add with this</p>
+                            <a href="{{ route('products.show', $suggestion) }}" class="mt-3 flex items-center gap-3">
+                                <img src="{{ \App\Support\StoreMedia::url($suggestion->images->first()?->path) }}" alt="" class="h-16 w-14 object-contain">
+                                <span>
+                                    <span class="block text-sm font-semibold">{{ $suggestion->name }}</span>
+                                    <span class="text-[13px]">₹{{ number_format($suggestion->effectivePrice(), 0) }}</span>
+                                </span>
+                            </a>
+                        </div>
+                    @endif
                 @endif
             </div>
 
             @if($cart->items->isNotEmpty())
                 <div class="border-t border-black/10 px-5 py-5 space-y-3">
+                    <form wire:submit="applyCoupon" class="flex gap-2">
+                        <input wire:model="couponCode" placeholder="Coupon code" class="min-w-0 flex-1 border border-black/15 px-3 py-2 text-sm">
+                        <button type="submit" class="border border-black px-3 text-[11px] font-semibold uppercase tracking-[.08em]">Apply</button>
+                    </form>
+                    @if($couponMessage)<p class="text-[12px]">{{ $couponMessage }}</p>@endif
                     <div class="flex justify-between text-sm"><span>Subtotal</span><span>₹{{ number_format($subtotal, 0) }}</span></div>
                     @if($discount > 0)<div class="flex justify-between text-sm"><span>Discount</span><span>−₹{{ number_format($discount, 0) }}</span></div>@endif
                     <div class="flex justify-between text-sm"><span>Tax</span><span>₹{{ number_format($tax, 0) }}</span></div>

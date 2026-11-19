@@ -7,6 +7,7 @@ use App\Services\CartService;
 use App\Services\CheckoutService;
 use App\Services\PaymentService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class CheckoutPage extends Component
@@ -20,6 +21,8 @@ class CheckoutPage extends Component
     public ?string $guestEmail = null;
 
     public string $notes = '';
+
+    public ?int $pendingOrderId = null;
 
     public function mount(): void
     {
@@ -37,6 +40,10 @@ class CheckoutPage extends Component
 
     public function placeOrder(CheckoutService $checkout, PaymentService $payment, CartService $cart): void
     {
+        $allowedPayments = ['cod'];
+        if (filled(config('shop.stripe_secret'))) $allowedPayments[] = PaymentGateway::Stripe->value;
+        if (filled(config('shop.razorpay_key')) && filled(config('shop.razorpay_secret'))) $allowedPayments[] = PaymentGateway::Razorpay->value;
+
         $this->validate([
             'shipping.first_name' => 'required|string|max:100',
             'shipping.last_name' => 'required|string|max:100',
@@ -46,6 +53,7 @@ class CheckoutPage extends Component
             'shipping.postal_code' => 'required|string|max:20',
             'shipping.phone' => 'required|string|max:20',
             'guestEmail' => Auth::check() ? 'nullable' : 'required|email',
+            'paymentMethod' => ['required', Rule::in($allowedPayments)],
         ]);
 
         $order = $checkout->placeOrder([
@@ -69,7 +77,14 @@ class CheckoutPage extends Component
         }
 
         if ($this->paymentMethod === PaymentGateway::Razorpay->value) {
-            session(['razorpay_order_id' => $order->id]);
+            $payload = $payment->createRazorpayOrder($order);
+            $this->pendingOrderId = $order->id;
+            $this->dispatch('razorpay-checkout', payload: $payload + [
+                'store_order_id' => $order->id,
+                'name' => config('shop.name'),
+                'email' => $order->guest_email ?: Auth::user()?->email,
+                'phone' => $this->shipping['phone'],
+            ]);
 
             return;
         }
@@ -78,12 +93,25 @@ class CheckoutPage extends Component
         $this->redirect(route('orders.show', $order), navigate: true);
     }
 
+    public function confirmRazorpay(string $paymentId, string $gatewayOrderId, string $signature, PaymentService $payment): void
+    {
+        abort_unless($this->pendingOrderId, 422);
+        $order = \App\Models\Order::findOrFail($this->pendingOrderId);
+        $expected = hash_hmac('sha256', $gatewayOrderId.'|'.$paymentId, (string) config('shop.razorpay_secret'));
+        abort_unless(hash_equals($expected, $signature), 422, 'Payment verification failed.');
+
+        $payment->markPaid($order, PaymentGateway::Razorpay, $paymentId);
+        $this->redirect(route('checkout.success', $order), navigate: true);
+    }
+
     public function render(CheckoutService $checkout)
     {
         $totals = $checkout->calculateTotals();
 
         return view('livewire.store.checkout-page', [
             'totals' => $totals,
+            'stripeEnabled' => filled(config('shop.stripe_secret')),
+            'razorpayEnabled' => filled(config('shop.razorpay_key')) && filled(config('shop.razorpay_secret')),
         ])->layout('layouts.store');
     }
 }

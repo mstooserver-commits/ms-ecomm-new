@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Store;
 
+use App\Models\Product;
 use App\Services\CartService;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -9,6 +10,10 @@ use Livewire\Component;
 class CartDrawer extends Component
 {
     public bool $open = false;
+
+    public string $couponCode = '';
+
+    public ?string $couponMessage = null;
 
     #[On('open-cart')]
     public function show(): void
@@ -47,13 +52,21 @@ class CartDrawer extends Component
         $this->dispatch('cart-updated');
     }
 
+    public function applyCoupon(CartService $cart): void
+    {
+        $result = $cart->applyCoupon(trim($this->couponCode));
+        $this->couponMessage = $result['message'];
+    }
+
     public function render(CartService $cartService)
     {
         $cart = $cartService->getCart()->load(['items.product.images', 'items.variant']);
         $subtotal = $cart->subtotal();
         $discount = $cartService->calculateDiscount($cart, $subtotal);
         $tax = round(max(0, $subtotal - $discount) * ((float) config('shop.tax_rate') / 100), 2);
-        $shipping = $subtotal >= (float) config('shop.free_shipping_threshold') ? 0 : (float) config('shop.shipping_fee');
+        $threshold = (float) config('shop.free_shipping_threshold');
+        $shipping = $subtotal >= $threshold ? 0 : (float) config('shop.shipping_fee');
+        $inCart = $cart->items->pluck('product_id');
 
         return view('livewire.store.cart-drawer', [
             'cart' => $cart,
@@ -62,6 +75,10 @@ class CartDrawer extends Component
             'tax' => $tax,
             'shipping' => $shipping,
             'total' => max(0, $subtotal - $discount + $tax + $shipping),
+            'threshold' => $threshold,
+            'remaining' => max(0, $threshold - $subtotal),
+            'progress' => $threshold > 0 ? min(100, round(($subtotal / $threshold) * 100)) : 100,
+            'suggestion' => Product::active()->with('images')->whereNotIn('id', $inCart)->inRandomOrder()->first(),
         ]);
     }
 }

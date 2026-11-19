@@ -3,6 +3,7 @@
 namespace App\Livewire\Store;
 
 use App\Models\Product;
+use App\Models\Faq;
 use App\Models\RecentlyViewedProduct;
 use App\Models\Review;
 use App\Models\Setting;
@@ -149,6 +150,7 @@ class ProductShow extends Component
             'recent' => $recent,
             'inWishlist' => Auth::check() && Wishlist::where('user_id', Auth::id())->where('product_id', $this->product->id)->exists(),
             'whatsappNumber' => Setting::valueFor('whatsapp_number', config('shop.whatsapp_number') ?: '910000000000'),
+            'faqs' => Faq::where('is_active', true)->orderBy('sort_order')->limit(5)->get(),
         ])->layout('layouts.store');
     }
 }

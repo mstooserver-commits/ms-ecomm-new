@@ -17,7 +17,7 @@ class ContentPagesTest extends TestCase
 
     public function test_all_products_shopify_compatible_url_is_available(): void
     {
-        $this->get('/collections/all')->assertOk()->assertSee('Furniture for living well');
+        $this->get('/collections/all')->assertOk()->assertSee('All products')->assertSee('Choose your piece');
     }
 
     public function test_contact_page_contains_the_showroom_details(): void
@@ -28,14 +28,13 @@ class ContentPagesTest extends TestCase
             ->assertSee('+91 98886 73566');
     }
 
-    public function test_homepage_contains_category_and_craftsmanship_sections(): void
+    public function test_homepage_contains_the_premium_tech_shopping_sections(): void
     {
         $this->get('/')
             ->assertOk()
-            ->assertSee('Furniture by category')
-            ->assertSee('Luxury Sofa')
-            ->assertSee('Materials')
-            ->assertSee('craftsmanship')
-            ->assertSee('Our Projects');
+            ->assertSee('Everyday tech')
+            ->assertSee('Phone Cases')
+            ->assertSee('Shop All Tech')
+            ->assertSee('Want first look at the next drop?');
     }
 }

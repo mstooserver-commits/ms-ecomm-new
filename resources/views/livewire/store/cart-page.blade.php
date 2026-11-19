@@ -1,5 +1,5 @@
-<div class="max-w-7xl mx-auto px-4 lg:px-8 py-8">
-    <h1 class="font-display text-4xl mb-10">Your Cart</h1>
+<div class="mx-auto max-w-[1200px] px-4 py-8 sm:px-5">
+    <h1 class="mb-10 text-4xl font-semibold">Your Cart</h1>
 
     @if($cart->items->isEmpty())
         <div class="text-center py-20">
@@ -34,7 +34,7 @@
                     </div>
                 @endforeach
             </div>
-            <div class="glass p-8 h-fit">
+            <div class="h-fit bg-[#f7f7f7] p-6 sm:p-8">
                 <h2 class="text-xs uppercase tracking-widest text-zinc-500 mb-6">Order Summary</h2>
                 <div class="space-y-3 text-sm">
                     <div class="flex justify-between"><span class="text-zinc-500">Subtotal</span><span>₹{{ number_format($subtotal, 2) }}</span></div>

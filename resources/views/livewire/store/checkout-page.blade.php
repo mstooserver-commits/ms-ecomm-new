@@ -1,5 +1,5 @@
-<div class="max-w-7xl mx-auto px-4 lg:px-8 py-8">
-    <h1 class="font-display text-4xl mb-10">Checkout</h1>
+<div class="mx-auto max-w-[1200px] px-4 py-8 sm:px-5">
+    <h1 class="mb-10 text-4xl font-semibold">Checkout</h1>
 
     @if($totals['cart']->items->isEmpty())
         <p class="text-zinc-500">Your cart is empty. <a href="{{ route('shop') }}" class="text-zinc-900 underline">Shop now</a></p>
@@ -51,18 +51,22 @@
                             <input type="radio" wire:model="paymentMethod" value="cod" class="accent-zinc-900">
                             <span class="text-sm">Cash on Delivery</span>
                         </label>
-                        <label class="flex items-center gap-3 p-4 border border-zinc-200 cursor-pointer">
-                            <input type="radio" wire:model="paymentMethod" value="stripe" class="accent-zinc-900">
-                            <span class="text-sm">Stripe (Card)</span>
-                        </label>
-                        <label class="flex items-center gap-3 p-4 border border-zinc-200 cursor-pointer">
-                            <input type="radio" wire:model="paymentMethod" value="razorpay" class="accent-zinc-900">
-                            <span class="text-sm">Razorpay</span>
-                        </label>
+                        @if($stripeEnabled)
+                            <label class="flex items-center gap-3 p-4 border border-zinc-200 cursor-pointer">
+                                <input type="radio" wire:model="paymentMethod" value="stripe" class="accent-zinc-900">
+                                <span class="text-sm">Secure card checkout</span>
+                            </label>
+                        @endif
+                        @if($razorpayEnabled)
+                            <label class="flex items-center gap-3 p-4 border border-zinc-200 cursor-pointer">
+                                <input type="radio" wire:model="paymentMethod" value="razorpay" class="accent-zinc-900">
+                                <span class="text-sm">Razorpay</span>
+                            </label>
+                        @endif
                     </div>
                 </div>
             </div>
-            <div class="glass p-8 h-fit">
+            <div class="h-fit bg-[#f7f7f7] p-6 sm:p-8">
                 <h2 class="text-xs uppercase tracking-widest text-zinc-500 mb-6">Order Total</h2>
                 <div class="space-y-3 text-sm mb-6 border-b border-zinc-200 pb-4">
                     @foreach($totals['cart']->items as $item)
@@ -86,3 +90,29 @@
         </form>
     @endif
 </div>
+
+@if($razorpayEnabled)
+    @script
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        $wire.on('razorpay-checkout', event => {
+            const data = event.payload;
+            const checkout = new Razorpay({
+                key: data.key,
+                amount: data.amount,
+                currency: data.currency,
+                order_id: data.order_id,
+                name: data.name,
+                prefill: { email: data.email || '', contact: data.phone || '' },
+                theme: { color: '#111111' },
+                handler: response => $wire.confirmRazorpay(
+                    response.razorpay_payment_id,
+                    response.razorpay_order_id,
+                    response.razorpay_signature
+                )
+            });
+            checkout.open();
+        });
+    </script>
+    @endscript
+@endif

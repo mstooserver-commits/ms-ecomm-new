@@ -21,7 +21,7 @@ class HomePage extends Component
             'newArrivals' => Product::active()->where('is_new_arrival', true)->with(['images', 'brand', 'category', 'variants'])->limit(8)->get(),
             'bestSellers' => Product::active()->where('is_best_seller', true)->with(['images', 'brand', 'category', 'variants'])->limit(8)->get(),
             'flashSale' => Product::active()->where('is_flash_sale', true)->with(['images', 'brand'])->limit(4)->get(),
-            'categories' => Category::active()->where('is_featured', true)->orderBy('sort_order')->limit(6)->get(),
+            'categories' => Category::active()->orderBy('sort_order')->get(),
             'collections' => Collection::where('is_active', true)->where('is_featured', true)->orderBy('sort_order')->limit(4)->get(),
             'testimonials' => Testimonial::where('is_active', true)->orderBy('sort_order')->limit(6)->get(),
             'instagram' => InstagramPost::where('is_active', true)->orderBy('sort_order')->limit(8)->get(),
